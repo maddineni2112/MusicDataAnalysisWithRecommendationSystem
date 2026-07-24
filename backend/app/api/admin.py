@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.services.evaluation import evaluate_recommender
-from app.services.imports import import_csv, import_json
+from app.services.imports import import_csv, import_json, import_playlist_json
 from app.services.jobs import list_jobs, run_logged_job
 from app.services.quality import run_quality_checks
+from app.services.spotify import collect_spotify_playlists, read_playlist_ids
 
 router = APIRouter(prefix="/admin")
 
@@ -38,12 +39,34 @@ def admin_import_json(path: str, source_name: str, _: None = Depends(require_adm
     )
 
 
+@router.post("/import/playlist-json")
+def admin_import_playlist_json(path: str, source_name: str, _: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    return run_logged_job(
+        db,
+        job_type="import_playlist_json",
+        parameters={"path": path, "source_name": source_name},
+        handler=lambda: import_playlist_json(db, Path(path), source_name),
+    )
+
+
 @router.post("/spotify/collect")
-def collect_spotify(_: None = Depends(require_admin)) -> dict:
-    settings = get_settings()
-    if not settings.spotify_client_id or not settings.spotify_client_secret:
-        return {"status": "credential_required", "message": "Set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET to enable playlist-first collection."}
-    return {"status": "ready", "message": "Spotify credentials detected; playlist crawler implementation is the next data-collection slice."}
+def collect_spotify(
+    playlist_id: list[str] | None = None,
+    playlist_file: str | None = None,
+    market: str = "IN",
+    limit_per_playlist: int = 100,
+    _: None = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    playlist_ids = read_playlist_ids(Path(playlist_file) if playlist_file else None, playlist_id)
+    if not playlist_ids:
+        return {"status": "needs_playlist_ids", "message": "Provide one or more playlist_id values or a playlist_file path."}
+    return run_logged_job(
+        db,
+        job_type="spotify_collect",
+        parameters={"playlist_ids": playlist_ids, "market": market, "limit_per_playlist": limit_per_playlist},
+        handler=lambda: collect_spotify_playlists(db, playlist_ids=playlist_ids, market=market, limit_per_playlist=limit_per_playlist),
+    )
 
 
 @router.post("/features/build")

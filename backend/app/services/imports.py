@@ -11,68 +11,71 @@ from app.models.entities import Artist, CollectionSource, InferredLabel, Playlis
 from app.services.labeling import infer_labels
 
 
-def import_csv(db: Session, path: Path, source_name: str, source_url: str | None = None) -> dict:
-    source = CollectionSource(name=source_name, source_type="csv", url=source_url, license="See source documentation")
+def import_records(db: Session, records: list[dict], source_name: str, source_type: str = "csv", source_url: str | None = None) -> dict:
+    source = CollectionSource(name=source_name, source_type=source_type, url=source_url, license="See source documentation")
     db.add(source)
     db.flush()
     rows_read = rows_written = rows_skipped = 0
-    with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        for row in reader:
-            rows_read += 1
-            if not row.get("name"):
-                rows_skipped += 1
-                continue
-            track = upsert_track_from_row(db, row)
-            artist_names = split_artists(row.get("artists", ""))
-            for artist_name in artist_names:
-                artist = upsert_artist(db, artist_name)
-                if not db.get(TrackArtist, (track.id, artist.id)):
-                    db.add(TrackArtist(track_id=track.id, artist_id=artist.id))
-            playlist = upsert_playlist_from_row(db, row)
-            if playlist and not db.get(PlaylistTrack, (playlist.id, track.id)):
-                db.add(PlaylistTrack(playlist_id=playlist.id, track_id=track.id, position=safe_int(row.get("playlist_position"))))
-            source_record_id = track.external_id or f"{track.name}:{rows_read}"
-            if not db.get(TrackSource, (track.id, source.id, source_record_id)):
-                db.add(
-                    TrackSource(
-                        track_id=track.id,
-                        source_id=source.id,
-                        source_record_id=source_record_id,
-                        source_context={
-                            "playlist_name": row.get("playlist_name"),
-                            "playlist_category": row.get("playlist_category"),
-                            "source_name": source_name,
-                        },
-                    )
+    for row in records:
+        rows_read += 1
+        if not row.get("name"):
+            rows_skipped += 1
+            continue
+        track = upsert_track_from_row(db, row)
+        artist_names = split_artists(row.get("artists", ""))
+        for artist_name in artist_names:
+            artist = upsert_artist(db, artist_name)
+            if not db.get(TrackArtist, (track.id, artist.id)):
+                db.add(TrackArtist(track_id=track.id, artist_id=artist.id))
+        playlist = upsert_playlist_from_row(db, row)
+        if playlist and not db.get(PlaylistTrack, (playlist.id, track.id)):
+            db.add(PlaylistTrack(playlist_id=playlist.id, track_id=track.id, position=safe_int(row.get("playlist_position"))))
+        source_record_id = track.external_id or f"{track.name}:{rows_read}"
+        if not db.get(TrackSource, (track.id, source.id, source_record_id)):
+            db.add(
+                TrackSource(
+                    track_id=track.id,
+                    source_id=source.id,
+                    source_record_id=source_record_id,
+                    source_context={
+                        "playlist_name": row.get("playlist_name"),
+                        "playlist_category": row.get("playlist_category"),
+                        "source_name": source_name,
+                    },
                 )
-            db.add(RawSnapshot(source_id=source.id, record_type="track", external_id=track.external_id, payload=row))
-            source_text = " ".join(
-                [
-                    source_name,
-                    row.get("language", ""),
-                    row.get("music_type", ""),
-                    row.get("mood", ""),
-                    row.get("playlist_name", ""),
-                    row.get("playlist_category", ""),
-                ]
             )
-            labels = infer_labels(
-                track_name=track.name,
-                album_name=track.album_name,
-                artist_names=artist_names,
-                source_text=source_text,
-            )
-            existing_labels = {
-                (label.dimension, label.value)
-                for label in db.scalars(select(InferredLabel).where(InferredLabel.track_id == track.id)).all()
-            }
-            for label in labels:
-                if (label.dimension, label.value) not in existing_labels:
-                    db.add(InferredLabel(track_id=track.id, dimension=label.dimension, value=label.value, confidence=label.confidence, evidence=label.evidence))
-            rows_written += 1
+        db.add(RawSnapshot(source_id=source.id, record_type="track", external_id=track.external_id, payload=row))
+        source_text = " ".join(
+            [
+                source_name,
+                row.get("language", ""),
+                row.get("music_type", ""),
+                row.get("mood", ""),
+                row.get("playlist_name", ""),
+                row.get("playlist_category", ""),
+            ]
+        )
+        labels = infer_labels(
+            track_name=track.name,
+            album_name=track.album_name,
+            artist_names=artist_names,
+            source_text=source_text,
+        )
+        existing_labels = {
+            (label.dimension, label.value)
+            for label in db.scalars(select(InferredLabel).where(InferredLabel.track_id == track.id)).all()
+        }
+        for label in labels:
+            if (label.dimension, label.value) not in existing_labels:
+                db.add(InferredLabel(track_id=track.id, dimension=label.dimension, value=label.value, confidence=label.confidence, evidence=label.evidence))
+        rows_written += 1
     db.commit()
     return {"rows_read": rows_read, "rows_written": rows_written, "rows_skipped": rows_skipped}
+
+
+def import_csv(db: Session, path: Path, source_name: str, source_url: str | None = None) -> dict:
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        return import_records(db, list(csv.DictReader(handle)), source_name, source_type="csv", source_url=source_url)
 
 
 def import_json(db: Session, path: Path, source_name: str) -> dict:
@@ -106,6 +109,39 @@ def import_json(db: Session, path: Path, source_name: str) -> dict:
         return import_csv(db, temp_csv, source_name)
     finally:
         temp_csv.unlink(missing_ok=True)
+
+
+def import_playlist_json(db: Session, path: Path, source_name: str) -> dict:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    playlists = payload if isinstance(payload, list) else payload.get("playlists", [])
+    records: list[dict] = []
+    for playlist in playlists:
+        playlist_name = playlist.get("name") or playlist.get("playlist_name")
+        playlist_id = playlist.get("pid") or playlist.get("id") or playlist.get("external_id") or playlist_name
+        tracks = playlist.get("tracks", [])
+        for index, track in enumerate(tracks, start=1):
+            records.append(
+                {
+                    "external_id": track.get("track_uri") or track.get("external_id") or track.get("id"),
+                    "name": track.get("track_name") or track.get("name"),
+                    "artists": track.get("artist_name") or track.get("artists") or "",
+                    "album_name": track.get("album_name") or track.get("album"),
+                    "duration_ms": track.get("duration_ms"),
+                    "spotify_url": spotify_url_from_uri(track.get("track_uri")),
+                    "playlist_external_id": f"public:{playlist_id}",
+                    "playlist_name": playlist_name,
+                    "playlist_description": playlist.get("description"),
+                    "playlist_category": playlist.get("category") or playlist.get("source_category") or playlist_name,
+                    "playlist_position": track.get("pos") or index,
+                }
+            )
+    return import_records(db, records, source_name, source_type="playlist_json")
+
+
+def spotify_url_from_uri(uri: str | None) -> str | None:
+    if not uri or not uri.startswith("spotify:track:"):
+        return None
+    return f"https://open.spotify.com/track/{uri.rsplit(':', 1)[-1]}"
 
 
 def upsert_track_from_row(db: Session, row: dict) -> Track:

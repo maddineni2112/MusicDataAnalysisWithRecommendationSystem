@@ -31,6 +31,8 @@ docker compose exec api alembic upgrade head
 Assert-LastCommand "alembic upgrade"
 docker compose exec api python -m app.cli import csv data/sample/indian_music_sample.csv --source-name "Sample Indian Music Dataset"
 Assert-LastCommand "sample CSV import"
+docker compose exec api python -m app.cli import playlist-json data/sample/public_playlist_sample.json --source-name "Public Playlist Fixture"
+Assert-LastCommand "sample playlist JSON import"
 docker compose exec api python -m app.cli quality run
 Assert-LastCommand "quality checks"
 docker compose exec api python -m app.cli models train --seed-limit 14 --result-limit 5

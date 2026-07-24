@@ -1,0 +1,52 @@
+{
+  "playlists": [
+    {
+      "pid": "sample-public-telugu-rain",
+      "name": "Telugu Rain Discovery",
+      "description": "Small public playlist-style fixture for importer smoke tests.",
+      "category": "Telugu romantic discovery",
+      "tracks": [
+        {
+          "pos": 1,
+          "track_uri": "spotify:track:sample_public_telugu_001",
+          "track_name": "Hyderabad Rain Memory",
+          "artist_name": "Indie Telugu Sample",
+          "album_name": "Rain City Sessions",
+          "duration_ms": 207000
+        },
+        {
+          "pos": 2,
+          "track_uri": "spotify:track:sample_public_telugu_002",
+          "track_name": "Charminar Evening Love",
+          "artist_name": "Indie Telugu Sample",
+          "album_name": "Rain City Sessions",
+          "duration_ms": 214000
+        }
+      ]
+    },
+    {
+      "pid": "sample-public-tamil-workout",
+      "name": "Tamil Workout Pulse",
+      "description": "Small public playlist-style fixture for energetic discovery.",
+      "category": "Tamil energetic workout",
+      "tracks": [
+        {
+          "pos": 1,
+          "track_uri": "spotify:track:sample_public_tamil_001",
+          "track_name": "Chennai Sprint Beat",
+          "artist_name": "Tamil Beat Sample",
+          "album_name": "South Workout Mix",
+          "duration_ms": 198000
+        },
+        {
+          "pos": 2,
+          "track_uri": "spotify:track:sample_public_tamil_002",
+          "track_name": "Marina Dance Drive",
+          "artist_name": "Tamil Beat Sample",
+          "album_name": "South Workout Mix",
+          "duration_ms": 203000
+        }
+      ]
+    }
+  ]
+}

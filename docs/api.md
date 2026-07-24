@@ -31,6 +31,8 @@ Current admin endpoints:
 
 - `POST /api/admin/import/csv`
 - `POST /api/admin/import/json`
+- `POST /api/admin/import/playlist-json`
+- `POST /api/admin/spotify/collect`
 - `POST /api/admin/quality/run`
 - `POST /api/admin/models/train`
 - `GET /api/admin/jobs`
