@@ -43,6 +43,55 @@ function mountTrends() {
   });
 }
 
+function renderBars(rows, labelKey = "value", valueKey = "count") {
+  const max = Math.max(...rows.map((row) => row[valueKey] || 0), 1);
+  return `<div class="bar-list">${rows.map((row) => {
+    const value = row[valueKey] || 0;
+    const width = Math.max(4, Math.round((value / max) * 100));
+    return `<div class="bar-row"><span>${escapeHtml(row[labelKey])}</span><div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div><strong>${value}</strong></div>`;
+  }).join("")}</div>`;
+}
+
+function mountDashboardAnalytics() {
+  const languageNode = document.querySelector('[data-widget="language-mix"]');
+  const labelNode = document.querySelector('[data-widget="label-mix"]');
+  const popularityNode = document.querySelector('[data-widget="popularity-spread"]');
+  const coverageNode = document.querySelector('[data-widget="recommender-coverage"]');
+  const playlistNode = document.querySelector('[data-widget="top-playlists"]');
+  if (!languageNode && !labelNode && !popularityNode && !coverageNode && !playlistNode) return;
+  fetchJson("/api/dashboard/analytics").then((data) => {
+    if (languageNode) {
+      languageNode.innerHTML = data.languages.length ? renderBars(data.languages) : "<p>No language labels yet.</p>";
+    }
+    if (labelNode) {
+      labelNode.innerHTML = `
+        <div class="split-list">
+          <div><h3>Moods</h3>${data.moods.length ? renderBars(data.moods) : "<p>No mood labels yet.</p>"}</div>
+          <div><h3>Types</h3>${data.music_types.length ? renderBars(data.music_types) : "<p>No type labels yet.</p>"}</div>
+        </div>`;
+    }
+    if (popularityNode) {
+      const pop = data.popularity;
+      popularityNode.innerHTML = pop.available
+        ? `<p>${pop.available} tracks include official popularity. Average ${pop.average}, range ${pop.min}-${pop.max}.</p>${renderBars(pop.buckets, "label", "count")}`
+        : "<p>Official popularity is not available for this dataset.</p>";
+    }
+    if (coverageNode) {
+      const recommender = data.recommender;
+      const metrics = recommender.latest_model_metrics || {};
+      coverageNode.innerHTML = `
+        <div class="metric">${Math.round((recommender.coverage || 0) * 100)}%</div>
+        <div class="label">${recommender.recommended_tracks} of ${recommender.total_tracks} tracks appear in saved recommendation results.</div>
+        <p>Seed exclusion pass rate: ${metrics.seed_exclusion_pass_rate ?? "N/A"} - Avg score: ${metrics.avg_score ?? "N/A"}</p>`;
+    }
+    if (playlistNode) {
+      playlistNode.innerHTML = data.top_playlists.length
+        ? `<table><thead><tr><th>Playlist</th><th>Category</th><th>Tracks</th></tr></thead><tbody>${data.top_playlists.map((playlist) => `<tr><td>${escapeHtml(playlist.name)}</td><td>${escapeHtml(playlist.source_category || "")}</td><td>${playlist.tracks}</td></tr>`).join("")}</tbody></table>`
+        : "<p>No playlist lineage yet.</p>";
+    }
+  });
+}
+
 function mountTrackTable() {
   const node = document.querySelector('[data-widget="track-table"]');
   if (!node) return;
@@ -107,7 +156,7 @@ function mountRecommender() {
     if (inputs[1].value) params.set("query", inputs[1].value);
     fetchJson(`/api/recommendations?${params}`).then((data) => {
       results.innerHTML = data.items.length
-        ? `<p>Parsed filters: ${JSON.stringify(data.parsed_query_filters)}</p><table><thead><tr><th>Song</th><th>Score</th><th>Reasons</th><th>Breakdown</th></tr></thead><tbody>${data.items.map((item) => `<tr><td>${item.track.name}</td><td>${item.score}</td><td>${item.reasons.join(", ")}</td><td><code>${JSON.stringify(item.score_breakdown)}</code></td></tr>`).join("")}</tbody></table>`
+        ? `<p>Parsed filters: ${escapeHtml(JSON.stringify(data.parsed_query_filters))}</p><table><thead><tr><th>Song</th><th>Score</th><th>Reasons</th><th>Breakdown</th></tr></thead><tbody>${data.items.map((item) => `<tr><td>${escapeHtml(item.track.name)}</td><td>${item.score}</td><td>${escapeHtml(item.reasons.join(", "))}</td><td><code>${escapeHtml(JSON.stringify(item.score_breakdown))}</code></td></tr>`).join("")}</tbody></table>`
         : "<p>No recommendations found yet. Import more tracks with shared labels.</p>";
     });
   });
@@ -218,6 +267,7 @@ function mountAdminOps() {
 
 mountOverview();
 mountTrends();
+mountDashboardAnalytics();
 mountTrackTable();
 mountRecommender();
 mountArtists();

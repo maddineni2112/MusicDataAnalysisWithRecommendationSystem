@@ -13,6 +13,7 @@ Public APIs are read-only and documented through FastAPI OpenAPI docs.
 - `GET /api/playlists`
 - `GET /api/dashboard/overview`
 - `GET /api/dashboard/trends`
+- `GET /api/dashboard/analytics`
 - `GET /api/recommendations`
 - `GET /api/model-insights`
 - `GET /api/data-quality/summary`

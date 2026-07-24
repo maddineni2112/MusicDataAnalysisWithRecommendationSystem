@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, selectinload
 from app.db.session import get_db
 from app.models.entities import Artist, DataQualityResult, InferredLabel, ModelRun, Playlist, PlaylistTrack, Track, TrackArtist
 from app.schemas.entities import ArtistOut, DashboardOverview, PaginatedPlaylists, PaginatedTracks, TrackOut
-from app.services.dashboard import language_trends, overview
+from app.services.dashboard import analytics_summary, language_trends, overview
 from app.services.nl_query import parse_recommendation_query
 from app.services.quality import quality_summary
 from app.services.recommender import recommend_tracks
@@ -182,6 +182,11 @@ def dashboard_overview(db: Session = Depends(get_db)) -> dict:
 @router.get("/dashboard/trends")
 def dashboard_trends(db: Session = Depends(get_db)) -> dict:
     return {"language_trends": language_trends(db)}
+
+
+@router.get("/dashboard/analytics")
+def dashboard_analytics(db: Session = Depends(get_db)) -> dict:
+    return analytics_summary(db)
 
 
 @router.get("/recommendations")
