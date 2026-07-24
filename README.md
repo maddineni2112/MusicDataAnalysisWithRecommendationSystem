@@ -58,6 +58,7 @@ docker compose up --build
 docker compose exec api alembic upgrade head
 docker compose exec api python -m app.cli import csv data/sample/indian_music_sample.csv --source-name "Sample Indian Music Dataset"
 docker compose exec api python -m app.cli quality run
+docker compose exec api python -m app.cli models train --seed-limit 14 --result-limit 5
 docker compose exec api python -m app.cli recommender rebuild
 ```
 

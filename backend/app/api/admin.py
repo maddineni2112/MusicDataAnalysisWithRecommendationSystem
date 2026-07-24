@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.db.session import get_db
+from app.services.evaluation import evaluate_recommender
 from app.services.imports import import_csv, import_json
 from app.services.jobs import list_jobs, run_logged_job
 from app.services.quality import run_quality_checks
@@ -51,8 +52,13 @@ def build_features(_: None = Depends(require_admin)) -> dict:
 
 
 @router.post("/models/train")
-def train_models(_: None = Depends(require_admin)) -> dict:
-    return {"status": "deferred", "message": "Popularity prediction and playlist holdout training are documented as the next ML slice."}
+def train_models(_: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    return run_logged_job(
+        db,
+        job_type="model_evaluation",
+        parameters={"seed_limit": 25, "result_limit": 10},
+        handler=lambda: evaluate_recommender(db, seed_limit=25, result_limit=10),
+    )
 
 
 @router.post("/recommendations/rebuild")

@@ -30,7 +30,7 @@ On Windows PowerShell, after Docker Desktop is running:
 .\scripts\local_demo.ps1
 ```
 
-This starts the services, runs migrations, imports sample data, runs quality checks, and prepares the recommender path.
+This starts the services, runs migrations, imports sample data, runs quality checks, stores a small recommender evaluation run, and prepares the recommender path.
 
 Open:
 

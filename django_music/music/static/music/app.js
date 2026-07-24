@@ -186,6 +186,7 @@ function mountAdminOps() {
       <input aria-label="Admin token" placeholder="Admin token" value="change-me-local-only">
       <button data-action="import">Import sample CSV</button>
       <button data-action="quality">Run quality checks</button>
+      <button data-action="models">Evaluate recommender</button>
       <button data-action="jobs">Refresh job history</button>
     </div>
     <div class="results"></div>`;
@@ -207,6 +208,9 @@ function mountAdminOps() {
   });
   node.querySelector('[data-action="quality"]').addEventListener("click", () => {
     adminFetch("/api/admin/quality/run", { method: "POST" }).then(loadJobs);
+  });
+  node.querySelector('[data-action="models"]').addEventListener("click", () => {
+    adminFetch("/api/admin/models/train", { method: "POST" }).then(loadJobs);
   });
   node.querySelector('[data-action="jobs"]').addEventListener("click", loadJobs);
   loadJobs();

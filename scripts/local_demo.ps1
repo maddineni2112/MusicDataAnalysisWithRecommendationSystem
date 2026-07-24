@@ -33,6 +33,8 @@ docker compose exec api python -m app.cli import csv data/sample/indian_music_sa
 Assert-LastCommand "sample CSV import"
 docker compose exec api python -m app.cli quality run
 Assert-LastCommand "quality checks"
+docker compose exec api python -m app.cli models train --seed-limit 14 --result-limit 5
+Assert-LastCommand "model evaluation"
 docker compose exec api python -m app.cli recommender rebuild
 Assert-LastCommand "recommender rebuild"
 

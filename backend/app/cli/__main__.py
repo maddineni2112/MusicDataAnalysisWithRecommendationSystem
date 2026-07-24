@@ -3,6 +3,7 @@ from pathlib import Path
 import typer
 
 from app.db.session import SessionLocal
+from app.services.evaluation import evaluate_recommender
 from app.services.imports import import_csv, import_json
 from app.services.jobs import run_logged_job
 from app.services.quality import run_quality_checks
@@ -52,8 +53,15 @@ def recommender_rebuild_command() -> None:
 
 
 @models_app.command("train")
-def models_train_command() -> None:
-    typer.echo("Model training scaffold ready for popularity prediction and playlist holdout evaluation.")
+def models_train_command(seed_limit: int = 25, result_limit: int = 10) -> None:
+    with SessionLocal() as db:
+        result = run_logged_job(
+            db,
+            job_type="model_evaluation",
+            parameters={"seed_limit": seed_limit, "result_limit": result_limit},
+            handler=lambda: evaluate_recommender(db, seed_limit=seed_limit, result_limit=result_limit),
+        )
+    typer.echo(result)
 
 
 @collect_app.command("spotify")
