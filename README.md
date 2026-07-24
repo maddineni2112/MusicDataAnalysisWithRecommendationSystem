@@ -26,14 +26,14 @@ Typer CLI jobs, imports, labeling, quality checks, recommender artifacts
 
 ```text
 .
-├── archive/v1.0/          # Preserved original notebook/report/PPT
-├── backend/               # FastAPI, SQLAlchemy, ML services, Typer CLI
-├── django_music/          # Django page shell/templates for portfolio integration
-├── frontend/              # Vite React island source
-├── data/sample/           # Small committed demo data
-├── docs/                  # Architecture, setup, API, schema, modeling docs
-├── docker-compose.yml
-└── .env.example
+|-- archive/v1.0/          # Preserved original notebook/report/PPT
+|-- backend/               # FastAPI, SQLAlchemy, ML services, Typer CLI
+|-- django_music/          # Django page shell/templates for portfolio integration
+|-- frontend/              # Vite React island source
+|-- data/sample/           # Small committed demo data
+|-- docs/                  # Architecture, setup, API, schema, modeling docs
+|-- docker-compose.yml
+`-- .env.example
 ```
 
 ## Quick Start
@@ -81,6 +81,20 @@ The existing portfolio repo can seed a project card that opens the local dashboa
 
 The original academic project is preserved under `archive/v1.0/`. It includes the PySpark notebook, report, presentation, and original recommender helper.
 
+## Documentation Deliverables
+
+- [Technical report source](docs/technical-report-v2.md)
+- [Pitch deck source](docs/pitch-deck-v2.md)
+- [Acceptance checklist](docs/acceptance-checklist.md)
+- [Architecture](docs/architecture.md)
+- [Setup](docs/setup.md)
+- [API](docs/api.md)
+- [Database schema](docs/database-schema.md)
+- [Data sources](docs/data-sources.md)
+- [Modeling](docs/modeling.md)
+- [Deployment](docs/deployment.md)
+- [v1-to-v2 evolution](docs/v1-to-v2-evolution.md)
+
 ## Development Status
 
-This branch implements the v2 foundation: schema, APIs, CLI, sample imports, automatic labeling rules, quality checks, hybrid recommender scaffolding, documentation, and portfolio integration shell. Spotify live collection remains credential-dependent and is designed not to block public-dataset development.
+This branch implements a working v2 local demo: schema, APIs, CLI imports, public playlist fallback, credential-gated Spotify collection, automatic labeling rules, quality checks, explained recommendations, model insights, admin operations, Docker/Render deployment configuration, documentation sources, and a portfolio-linked Django shell. Spotify live collection remains credential-dependent and is designed not to block public-dataset development.

@@ -13,3 +13,11 @@ v2.0 expands the work into a full-stack platform:
 - hybrid recommender
 - model insight documentation
 - deployment-ready structure
+
+## Portfolio Deliverables
+
+- [v2 technical report](technical-report-v2.md)
+- [v2 pitch deck source](pitch-deck-v2.md)
+- [v2 acceptance checklist](acceptance-checklist.md)
+
+These files keep the project story interview-ready while implementation continues toward the full v2.0 release.

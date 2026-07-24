@@ -1,0 +1,59 @@
+# v2.0 Acceptance Checklist
+
+This checklist tracks the final plan toward a complete v2.0 release.
+
+## Completed or Partially Completed
+
+- v1.0 archived under `archive/v1.0/`.
+- `v1.0` tag exists from the preserved baseline.
+- `v2-platform` branch exists and is pushed.
+- PostgreSQL schema and Alembic migration exist.
+- FastAPI public APIs exist.
+- FastAPI protected admin APIs exist.
+- Django music shell exists.
+- Existing portfolio project card points to the local music dashboard.
+- Docker Compose local demo runs.
+- CSV import works.
+- playlist-style JSON import works.
+- Spotify collection path exists and is credential-gated.
+- source lineage and raw snapshots are stored.
+- automatic labels are inferred with confidence/evidence.
+- label overrides persist separately.
+- dashboard landing has KPIs and analytics.
+- song explorer exists.
+- song detail includes source playlists, effective labels, and similar tracks.
+- artist explorer exists.
+- artist detail exists.
+- artist network endpoint/UI exists.
+- recommender returns explained results.
+- model insights show saved evaluation metrics.
+- admin page supports imports, quality checks, model evaluation, job history, job detail, model runs, and label overrides.
+- sample data works without Spotify credentials.
+- deployment-ready Docker start scripts exist.
+- Render blueprint exists.
+- technical report source exists.
+- pitch deck source exists.
+
+## Still Required for Full v2.0
+
+- larger 100k-300k track local/research dataset, or documented smaller deployed subset
+- richer public dataset acquisition workflow
+- stronger TF-IDF/text similarity feature build
+- optional sentence-transformer embedding workflow
+- pgvector or vector-artifact fallback implementation
+- robust playlist holdout evaluation on larger data
+- popularity prediction demo if official popularity data is sufficient
+- production deployment
+- deployed URL wired into portfolio card
+- final screenshots from real deployed/local data
+- PDF report export
+- PPT export
+- `v2.0-alpha`, `v2.0-beta`, and `v2.0` tags at appropriate release points
+- final merge strategy into `main`
+
+## Current Local Demo URLs
+
+- Portfolio: `http://127.0.0.1:8000/`
+- Music dashboard: `http://127.0.0.1:8010/music/`
+- Admin Ops: `http://127.0.0.1:8010/admin/`
+- API docs: `http://127.0.0.1:8001/docs`
