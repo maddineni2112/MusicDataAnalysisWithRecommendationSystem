@@ -66,6 +66,14 @@ docker compose exec api python -m app.cli recommender rebuild
 - FastAPI: `http://localhost:8001/docs`
 - Django music shell: `http://localhost:8000/music/`
 
+On Windows, the helper script runs the full local demo setup:
+
+```powershell
+.\scripts\local_demo.ps1
+```
+
+The existing portfolio repo can seed a project card that opens the local dashboard at `http://127.0.0.1:8000/music/`.
+
 ## v1.0 Archive
 
 The original academic project is preserved under `archive/v1.0/`. It includes the PySpark notebook, report, presentation, and original recommender helper.

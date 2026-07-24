@@ -8,3 +8,7 @@ The v2 platform uses a Django page shell, FastAPI service, and PostgreSQL databa
 - React islands are mounted into Django templates for interactive dashboards, explorer tables, recommender panels, and admin widgets.
 
 Preferred deployment is same-domain/subpath routing. Separate service URLs are acceptable when free-tier hosting makes subpath proxying impractical.
+
+## Existing Portfolio Link
+
+The separate portfolio repository remains the public entrypoint. Its project card for **Indian Music Intelligence Platform** uses a `demo` click behavior and opens the local or deployed dashboard first. The music repo owns the platform implementation; the portfolio repo owns the card, navigation, and recruiter-facing project entry.
