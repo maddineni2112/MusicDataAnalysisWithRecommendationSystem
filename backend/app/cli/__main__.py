@@ -4,6 +4,7 @@ import typer
 
 from app.db.session import SessionLocal
 from app.services.evaluation import evaluate_recommender
+from app.services.features import build_tfidf_features
 from app.services.imports import import_csv, import_json, import_playlist_json
 from app.services.jobs import run_logged_job
 from app.services.quality import run_quality_checks
@@ -62,7 +63,26 @@ def quality_run_command() -> None:
 
 @recommender_app.command("rebuild")
 def recommender_rebuild_command() -> None:
-    typer.echo("Hybrid recommender uses online scoring in this milestone; artifact rebuild is scaffolded.")
+    with SessionLocal() as db:
+        result = run_logged_job(
+            db,
+            job_type="recommendations_rebuild",
+            parameters={"artifact": "tfidf_index"},
+            handler=lambda: build_tfidf_features(db),
+        )
+    typer.echo(result)
+
+
+@recommender_app.command("features")
+def recommender_features_command() -> None:
+    with SessionLocal() as db:
+        result = run_logged_job(
+            db,
+            job_type="features_build",
+            parameters={"builder": "tfidf_v1"},
+            handler=lambda: build_tfidf_features(db),
+        )
+    typer.echo(result)
 
 
 @models_app.command("train")

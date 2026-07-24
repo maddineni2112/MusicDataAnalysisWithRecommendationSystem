@@ -17,7 +17,10 @@ docker compose exec api alembic upgrade head
 
 ```bash
 docker compose exec api python -m app.cli import csv data/sample/indian_music_sample.csv --source-name "Sample Indian Music Dataset"
+docker compose exec api python -m app.cli import playlist-json data/sample/public_playlist_sample.json --source-name "Public Playlist Fixture"
 docker compose exec api python -m app.cli quality run
+docker compose exec api python -m app.cli recommender features
+docker compose exec api python -m app.cli models train --seed-limit 14 --result-limit 5
 ```
 
 Spotify collection requires `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`; public/sample imports do not.
@@ -30,7 +33,7 @@ On Windows PowerShell, after Docker Desktop is running:
 .\scripts\local_demo.ps1
 ```
 
-This starts the services, runs migrations, imports sample data, runs quality checks, stores a small recommender evaluation run, and prepares the recommender path.
+This starts the services, runs migrations, imports sample data, runs quality checks, builds the TF-IDF recommender artifact, and stores a small recommender evaluation run.
 
 Open:
 

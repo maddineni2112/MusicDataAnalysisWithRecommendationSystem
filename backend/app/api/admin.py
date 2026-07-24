@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.services.evaluation import evaluate_recommender
+from app.services.features import build_tfidf_features
 from app.services.imports import import_csv, import_json, import_playlist_json
 from app.services.jobs import get_job, list_jobs, list_model_runs, run_logged_job
 from app.services.labels import apply_label_override, list_label_overrides
@@ -71,8 +72,13 @@ def collect_spotify(
 
 
 @router.post("/features/build")
-def build_features(_: None = Depends(require_admin)) -> dict:
-    return {"status": "completed", "message": "Current milestone builds recommendation features online from normalized labels and metadata."}
+def build_features(_: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    return run_logged_job(
+        db,
+        job_type="features_build",
+        parameters={"builder": "tfidf_v1"},
+        handler=lambda: build_tfidf_features(db),
+    )
 
 
 @router.post("/models/train")
@@ -86,8 +92,13 @@ def train_models(_: None = Depends(require_admin), db: Session = Depends(get_db)
 
 
 @router.post("/recommendations/rebuild")
-def rebuild_recommendations(_: None = Depends(require_admin)) -> dict:
-    return {"status": "completed", "message": "Hybrid recommender computes online from normalized metadata in this milestone."}
+def rebuild_recommendations(_: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    return run_logged_job(
+        db,
+        job_type="recommendations_rebuild",
+        parameters={"artifact": "tfidf_index"},
+        handler=lambda: build_tfidf_features(db),
+    )
 
 
 @router.get("/jobs")

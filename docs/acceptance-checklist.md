@@ -26,6 +26,8 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - artist detail exists.
 - artist network endpoint/UI exists.
 - recommender returns explained results.
+- TF-IDF text similarity feature build exists.
+- local vector-artifact fallback exists under ignored `artifacts/`.
 - model insights show saved evaluation metrics.
 - admin page supports imports, quality checks, model evaluation, job history, job detail, model runs, and label overrides.
 - sample data works without Spotify credentials.
@@ -38,9 +40,8 @@ This checklist tracks the final plan toward a complete v2.0 release.
 
 - larger 100k-300k track local/research dataset, or documented smaller deployed subset
 - richer public dataset acquisition workflow
-- stronger TF-IDF/text similarity feature build
 - optional sentence-transformer embedding workflow
-- pgvector or vector-artifact fallback implementation
+- pgvector implementation where hosting supports it
 - robust playlist holdout evaluation on larger data
 - popularity prediction demo if official popularity data is sufficient
 - production deployment

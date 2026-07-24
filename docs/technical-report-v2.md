@@ -103,10 +103,11 @@ The current recommender is a hybrid metadata scorer designed for explainability 
 - region overlap
 - release-era proximity
 - official popularity proximity when available
+- TF-IDF text similarity from normalized track, artist, playlist, and label text
 - diversity penalty
 - owner/admin label overrides
 
-Each result includes human-readable reasons and a technical score breakdown.
+The TF-IDF builder stores feature text in PostgreSQL and writes an ignored local vector artifact under `artifacts/recommender/`. Recommendation scoring uses that artifact when available and falls back to metadata scoring when it is missing. Each result includes human-readable reasons and a technical score breakdown.
 
 ## Evaluation
 
@@ -180,7 +181,7 @@ Current limitations:
 
 - live Spotify collection requires developer credentials
 - sample dataset is intentionally small
-- recommender is metadata/rules based rather than embedding/vector based
+- recommender uses a local TF-IDF vector artifact, but not yet sentence embeddings or pgvector
 - no public user accounts or personalization
 - no audio playback
 - no paid LLM query parser
@@ -191,7 +192,7 @@ Planned improvements:
 
 - larger Indian music dataset collection
 - richer Spotify/public playlist seeds
-- TF-IDF and sentence-transformer features
+- sentence-transformer features
 - pgvector similarity when hosting supports it
 - playlist holdout evaluation at larger scale
 - popularity prediction as a secondary ML demo

@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.entities import InferredLabel, Track
+from app.services.features import load_tfidf_artifact, tfidf_similarity_scores
 from app.services.labels import effective_label_map
 
 
@@ -16,6 +17,7 @@ DEFAULT_WEIGHTS = {
     "region": 0.7,
     "era": 0.6,
     "popularity": 0.4,
+    "text_similarity": 1.1,
 }
 
 
@@ -31,13 +33,14 @@ def recommend_tracks(db: Session, seed_track_id: int, limit: int = 10, filters: 
         .where(Track.id != seed_track_id)
         .limit(1000)
     ).all()
+    text_scores = tfidf_similarity_scores(seed_track_id, [candidate.id for candidate in candidates], load_tfidf_artifact())
     scored = []
     artist_counter: Counter[str] = Counter()
     for candidate in candidates:
         candidate_labels = effective_label_map(db, candidate.id)
         if not passes_filters(candidate, filters, candidate_labels):
             continue
-        score, reasons, breakdown = score_candidate(seed, seed_labels, candidate, candidate_labels)
+        score, reasons, breakdown = score_candidate(seed, seed_labels, candidate, candidate_labels, text_scores.get(candidate.id, 0.0))
         if score <= 0:
             continue
         artist_key = candidate.album_name or "unknown"
@@ -50,7 +53,13 @@ def recommend_tracks(db: Session, seed_track_id: int, limit: int = 10, filters: 
     return scored[:limit]
 
 
-def score_candidate(seed: Track, seed_labels: dict[str, set[str]], candidate: Track, candidate_labels: dict[str, set[str]] | None = None) -> tuple[float, list[str], dict]:
+def score_candidate(
+    seed: Track,
+    seed_labels: dict[str, set[str]],
+    candidate: Track,
+    candidate_labels: dict[str, set[str]] | None = None,
+    text_similarity: float = 0.0,
+) -> tuple[float, list[str], dict]:
     candidate_labels = candidate_labels or label_map(candidate.labels)
     score = 0.0
     reasons = []
@@ -76,6 +85,12 @@ def score_candidate(seed: Track, seed_labels: dict[str, set[str]], candidate: Tr
         popularity_score = max(0.0, DEFAULT_WEIGHTS["popularity"] - (gap * 0.01))
         score += popularity_score
         breakdown["popularity"] = popularity_score
+    if text_similarity > 0:
+        text_score = DEFAULT_WEIGHTS["text_similarity"] * text_similarity
+        score += text_score
+        breakdown["text_similarity"] = round(text_score, 4)
+        if text_similarity >= 0.12:
+            reasons.append("strong text similarity")
     return score, reasons[:3] or ["metadata similarity match"], breakdown
 
 

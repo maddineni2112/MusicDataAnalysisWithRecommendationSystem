@@ -35,10 +35,10 @@ docker compose exec api python -m app.cli import playlist-json data/sample/publi
 Assert-LastCommand "sample playlist JSON import"
 docker compose exec api python -m app.cli quality run
 Assert-LastCommand "quality checks"
-docker compose exec api python -m app.cli models train --seed-limit 14 --result-limit 5
-Assert-LastCommand "model evaluation"
 docker compose exec api python -m app.cli recommender rebuild
 Assert-LastCommand "recommender rebuild"
+docker compose exec api python -m app.cli models train --seed-limit 14 --result-limit 5
+Assert-LastCommand "model evaluation"
 
 Write-Host ""
 Write-Host "Local music platform demo is ready:"
