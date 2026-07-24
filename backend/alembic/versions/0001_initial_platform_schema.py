@@ -54,6 +54,13 @@ def upgrade() -> None:
         sa.Column("position", sa.Integer()),
     )
     op.create_table(
+        "track_sources",
+        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("source_id", sa.ForeignKey("collection_sources.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("source_record_id", sa.String(length=180), primary_key=True),
+        sa.Column("source_context", sa.JSON(), default=dict),
+    )
+    op.create_table(
         "collection_sources",
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("name", sa.String(length=220), nullable=False),
@@ -183,6 +190,7 @@ def downgrade() -> None:
         "label_overrides",
         "inferred_labels",
         "raw_snapshots",
+        "track_sources",
         "collection_sources",
         "playlist_tracks",
         "track_artists",

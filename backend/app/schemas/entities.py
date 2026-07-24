@@ -36,11 +36,29 @@ class ArtistOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PlaylistOut(BaseModel):
+    id: int
+    external_id: str | None
+    name: str
+    description: str | None
+    source_category: str | None
+    source_url: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class PaginatedTracks(BaseModel):
     total: int
     limit: int
     offset: int
     items: list[TrackOut]
+
+
+class PaginatedPlaylists(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    items: list[PlaylistOut]
 
 
 class RecommendationOut(BaseModel):

@@ -1,6 +1,15 @@
-external_id,name,artists,album_name,release_date,release_year,duration_ms,popularity,explicit,spotify_url,language,music_type,mood
-sample_telugu_001,Romantic Telugu Melody,S. P. Sample,Tollywood Love Hits,2018-01-01,2018,210000,71,false,https://open.spotify.com/track/sample_telugu_001,Telugu,film,romantic
-sample_hindi_001,Hindi Party Night,Arijit Sample,Bollywood Dance Mix,2021-05-10,2021,198000,82,false,https://open.spotify.com/track/sample_hindi_001,Hindi,film,energetic
-sample_tamil_001,Tamil Indie Rain,Anirudh Sample,Kollywood Indie Sessions,2020-08-15,2020,224000,67,false,https://open.spotify.com/track/sample_tamil_001,Tamil,indie,calm
-sample_punjabi_001,Punjabi Rap Drive,Diljit Sample,North Beats,2022-11-20,2022,205000,76,false,https://open.spotify.com/track/sample_punjabi_001,Punjabi,rap_hiphop,energetic
-sample_malayalam_001,Malayalam Devotional Dawn,KS Sample,Kerala Devotional Classics,2014-03-02,2014,250000,58,false,https://open.spotify.com/track/sample_malayalam_001,Malayalam,devotional,devotional
+external_id,name,artists,album_name,release_date,release_year,duration_ms,popularity,explicit,spotify_url,language,music_type,mood,playlist_name,playlist_category,playlist_position
+sample_telugu_001,Romantic Telugu Melody,S. P. Sample,Tollywood Love Hits,2018-01-01,2018,210000,71,false,https://open.spotify.com/track/sample_telugu_001,Telugu,film,romantic,Telugu Romantic Film Hits,romantic,1
+sample_telugu_002,Tollywood Love Rain,S. P. Sample,Telugu Rain Songs,2019-04-12,2019,218000,69,false,https://open.spotify.com/track/sample_telugu_002,Telugu,film,romantic,Telugu Romantic Film Hits,romantic,2
+sample_telugu_003,Telugu Workout Beat,DSP Sample,Tollywood Dance Mix,2022-02-18,2022,196000,74,false,https://open.spotify.com/track/sample_telugu_003,Telugu,film,energetic,Telugu Party Energy,party,1
+sample_hindi_001,Hindi Party Night,Arijit Sample,Bollywood Dance Mix,2021-05-10,2021,198000,82,false,https://open.spotify.com/track/sample_hindi_001,Hindi,film,energetic,Bollywood Party Mix,party,1
+sample_hindi_002,Bollywood Love Walk,Shreya Sample,Bollywood Love Stories,2016-09-05,2016,230000,77,false,https://open.spotify.com/track/sample_hindi_002,Hindi,film,romantic,Bollywood Romantic Essentials,romantic,1
+sample_hindi_003,Hindi Devotional Morning,Sonu Sample,Bhakti Morning,2012-01-22,2012,245000,61,false,https://open.spotify.com/track/sample_hindi_003,Hindi,devotional,devotional,Indian Devotional Morning,devotional,1
+sample_tamil_001,Tamil Indie Rain,Anirudh Sample,Kollywood Indie Sessions,2020-08-15,2020,224000,67,false,https://open.spotify.com/track/sample_tamil_001,Tamil,indie,calm,Tamil Indie Chill,indie,1
+sample_tamil_002,Kollywood Dance Pulse,Anirudh Sample,Tamil Dance Floor,2023-06-03,2023,203000,80,false,https://open.spotify.com/track/sample_tamil_002,Tamil,film,energetic,Kollywood Party Mix,party,1
+sample_punjabi_001,Punjabi Rap Drive,Diljit Sample,North Beats,2022-11-20,2022,205000,76,false,https://open.spotify.com/track/sample_punjabi_001,Punjabi,rap_hiphop,energetic,Punjabi Drive Beats,rap,1
+sample_punjabi_002,Punjabi Folk Wedding,Diljit Sample,Punjab Folk Nights,2015-10-10,2015,240000,70,false,https://open.spotify.com/track/sample_punjabi_002,Punjabi,folk,energetic,Punjabi Wedding Folk,folk,1
+sample_malayalam_001,Malayalam Devotional Dawn,KS Sample,Kerala Devotional Classics,2014-03-02,2014,250000,58,false,https://open.spotify.com/track/sample_malayalam_001,Malayalam,devotional,devotional,Indian Devotional Morning,devotional,2
+sample_kannada_001,Kannada Indie Evening,Vijay Sample,Sandalwood Indie,2020-12-12,2020,215000,63,false,https://open.spotify.com/track/sample_kannada_001,Kannada,indie,calm,Kannada Indie Chill,indie,1
+sample_bengali_001,Bengali Folk River,Anupam Sample,Bangla Folk Stories,2008-07-07,2008,235000,59,false,https://open.spotify.com/track/sample_bengali_001,Bengali,folk,calm,Bengali Folk Classics,folk,1
+sample_marathi_001,Marathi Pop Drive,Ajay Sample,Marathi Pop Hits,2021-03-19,2021,201000,66,false,https://open.spotify.com/track/sample_marathi_001,Marathi,pop,energetic,Marathi Pop Drive,pop,1
