@@ -9,4 +9,5 @@ urlpatterns = [
     path("explorer/", views.explorer, name="music_explorer"),
     path("artists/", views.artists, name="music_artists"),
     path("model-insights/", views.model_insights, name="music_model_insights"),
+    path("admin/", views.admin_ops, name="music_admin_ops"),
 ]

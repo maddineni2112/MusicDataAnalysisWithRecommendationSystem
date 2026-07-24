@@ -30,3 +30,7 @@ def artists(request):
 
 def model_insights(request):
     return render(request, "music/model_insights.html", base_context("model-insights"))
+
+
+def admin_ops(request):
+    return render(request, "music/admin_ops.html", base_context("admin"))

@@ -44,21 +44,14 @@ def upgrade() -> None:
     )
     op.create_table(
         "track_artists",
-        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
-        sa.Column("artist_id", sa.ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("artist_id", sa.Integer(), sa.ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True),
     )
     op.create_table(
         "playlist_tracks",
-        sa.Column("playlist_id", sa.ForeignKey("playlists.id", ondelete="CASCADE"), primary_key=True),
-        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("playlist_id", sa.Integer(), sa.ForeignKey("playlists.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
         sa.Column("position", sa.Integer()),
-    )
-    op.create_table(
-        "track_sources",
-        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
-        sa.Column("source_id", sa.ForeignKey("collection_sources.id", ondelete="CASCADE"), primary_key=True),
-        sa.Column("source_record_id", sa.String(length=180), primary_key=True),
-        sa.Column("source_context", sa.JSON(), default=dict),
     )
     op.create_table(
         "collection_sources",
@@ -71,9 +64,16 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
     op.create_table(
+        "track_sources",
+        sa.Column("track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("source_id", sa.Integer(), sa.ForeignKey("collection_sources.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("source_record_id", sa.String(length=180), primary_key=True),
+        sa.Column("source_context", sa.JSON(), default=dict),
+    )
+    op.create_table(
         "raw_snapshots",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("source_id", sa.ForeignKey("collection_sources.id", ondelete="SET NULL")),
+        sa.Column("source_id", sa.Integer(), sa.ForeignKey("collection_sources.id", ondelete="SET NULL")),
         sa.Column("record_type", sa.String(length=80), index=True),
         sa.Column("external_id", sa.String(length=120), index=True),
         sa.Column("payload", sa.JSON(), nullable=False),
@@ -82,7 +82,7 @@ def upgrade() -> None:
     op.create_table(
         "inferred_labels",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE"), index=True),
+        sa.Column("track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="CASCADE"), index=True),
         sa.Column("dimension", sa.String(length=80), index=True),
         sa.Column("value", sa.String(length=120), index=True),
         sa.Column("confidence", sa.Float(), default=0.0),
@@ -91,7 +91,7 @@ def upgrade() -> None:
     op.create_table(
         "label_overrides",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE"), index=True),
+        sa.Column("track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="CASCADE"), index=True),
         sa.Column("dimension", sa.String(length=80), index=True),
         sa.Column("value", sa.String(length=120)),
         sa.Column("reason", sa.Text()),
@@ -99,7 +99,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "track_features",
-        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="CASCADE"), primary_key=True),
         sa.Column("feature_text", sa.Text()),
         sa.Column("feature_payload", sa.JSON(), default=dict),
     )
@@ -119,7 +119,7 @@ def upgrade() -> None:
     op.create_table(
         "job_events",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("job_id", sa.ForeignKey("job_runs.id", ondelete="CASCADE"), index=True),
+        sa.Column("job_id", sa.Integer(), sa.ForeignKey("job_runs.id", ondelete="CASCADE"), index=True),
         sa.Column("level", sa.String(length=40), default="info"),
         sa.Column("message", sa.Text(), nullable=False),
         sa.Column("payload", sa.JSON(), default=dict),
@@ -137,16 +137,16 @@ def upgrade() -> None:
     op.create_table(
         "recommendation_runs",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("seed_track_id", sa.ForeignKey("tracks.id", ondelete="SET NULL")),
-        sa.Column("model_run_id", sa.ForeignKey("model_runs.id", ondelete="SET NULL")),
+        sa.Column("seed_track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="SET NULL")),
+        sa.Column("model_run_id", sa.Integer(), sa.ForeignKey("model_runs.id", ondelete="SET NULL")),
         sa.Column("parameters", sa.JSON(), default=dict),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
     op.create_table(
         "recommendation_results",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("run_id", sa.ForeignKey("recommendation_runs.id", ondelete="CASCADE"), index=True),
-        sa.Column("track_id", sa.ForeignKey("tracks.id", ondelete="CASCADE")),
+        sa.Column("run_id", sa.Integer(), sa.ForeignKey("recommendation_runs.id", ondelete="CASCADE"), index=True),
+        sa.Column("track_id", sa.Integer(), sa.ForeignKey("tracks.id", ondelete="CASCADE")),
         sa.Column("rank", sa.Integer()),
         sa.Column("score", sa.Float()),
         sa.Column("reasons", sa.JSON(), default=list),
@@ -168,7 +168,7 @@ def upgrade() -> None:
     op.create_table(
         "data_quality_results",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("check_id", sa.ForeignKey("data_quality_checks.id", ondelete="CASCADE")),
+        sa.Column("check_id", sa.Integer(), sa.ForeignKey("data_quality_checks.id", ondelete="CASCADE")),
         sa.Column("status", sa.String(length=40), index=True),
         sa.Column("count", sa.Integer(), default=0),
         sa.Column("sample", sa.JSON(), default=list),

@@ -117,6 +117,40 @@ function mountQuality() {
   });
 }
 
+function mountAdminOps() {
+  const node = document.querySelector('[data-widget="admin-ops"]');
+  if (!node) return;
+  node.innerHTML = `
+    <div class="toolbar">
+      <input aria-label="Admin token" placeholder="Admin token" value="change-me-local-only">
+      <button data-action="import">Import sample CSV</button>
+      <button data-action="quality">Run quality checks</button>
+      <button data-action="jobs">Refresh job history</button>
+    </div>
+    <div class="results"></div>`;
+  const token = node.querySelector("input");
+  const results = node.querySelector(".results");
+  const adminFetch = (path, options = {}) => fetch(`${apiBase}${path}`, {
+    ...options,
+    headers: { "x-admin-token": token.value, ...(options.headers || {}) },
+  }).then((response) => response.json());
+  const loadJobs = () => {
+    adminFetch("/api/admin/jobs").then((data) => {
+      results.innerHTML = data.items && data.items.length
+        ? `<table><thead><tr><th>ID</th><th>Job</th><th>Status</th><th>Read</th><th>Written</th><th>Skipped</th></tr></thead><tbody>${data.items.map((job) => `<tr><td>${job.id}</td><td>${job.job_type}</td><td>${job.status}</td><td>${job.rows_read}</td><td>${job.rows_written}</td><td>${job.rows_skipped}</td></tr>`).join("")}</tbody></table>`
+        : "<p>No jobs logged yet.</p>";
+    });
+  };
+  node.querySelector('[data-action="import"]').addEventListener("click", () => {
+    adminFetch('/api/admin/import/csv?path=data/sample/indian_music_sample.csv&source_name=Sample%20Indian%20Music%20Dataset', { method: "POST" }).then(loadJobs);
+  });
+  node.querySelector('[data-action="quality"]').addEventListener("click", () => {
+    adminFetch("/api/admin/quality/run", { method: "POST" }).then(loadJobs);
+  });
+  node.querySelector('[data-action="jobs"]').addEventListener("click", loadJobs);
+  loadJobs();
+}
+
 mountOverview();
 mountTrends();
 mountTrackTable();
@@ -124,3 +158,4 @@ mountRecommender();
 mountArtists();
 mountModelInsights();
 mountQuality();
+mountAdminOps();

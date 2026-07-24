@@ -37,7 +37,7 @@ services:
     env_file:
       - .env.example
     ports:
-      - "8000:8000"
+      - "8010:8000"
     volumes:
       - ./django_music:/app
     depends_on:

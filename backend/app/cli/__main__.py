@@ -4,6 +4,7 @@ import typer
 
 from app.db.session import SessionLocal
 from app.services.imports import import_csv, import_json
+from app.services.jobs import run_logged_job
 from app.services.quality import run_quality_checks
 
 app = typer.Typer(help="Indian Music Intelligence Platform data and ML jobs.")
@@ -17,14 +18,14 @@ collect_app = typer.Typer(help="Collect API data.")
 @import_app.command("csv")
 def import_csv_command(path: Path, source_name: str = "Local CSV import") -> None:
     with SessionLocal() as db:
-        result = import_csv(db, path, source_name)
+        result = run_logged_job(db, job_type="import_csv", parameters={"path": str(path), "source_name": source_name}, handler=lambda: import_csv(db, path, source_name))
     typer.echo(result)
 
 
 @import_app.command("json")
 def import_json_command(path: Path, source_name: str = "Local JSON import") -> None:
     with SessionLocal() as db:
-        result = import_json(db, path, source_name)
+        result = run_logged_job(db, job_type="import_json", parameters={"path": str(path), "source_name": source_name}, handler=lambda: import_json(db, path, source_name))
     typer.echo(result)
 
 
@@ -36,8 +37,13 @@ def import_sql_dump_command(path: Path) -> None:
 @quality_app.command("run")
 def quality_run_command() -> None:
     with SessionLocal() as db:
-        results = run_quality_checks(db)
-    typer.echo([{"id": result.id, "status": result.status, "count": result.count} for result in results])
+        result = run_logged_job(
+            db,
+            job_type="quality_run",
+            parameters={},
+            handler=lambda: {"rows_written": len(run_quality_checks(db)), "failure_count": 0},
+        )
+    typer.echo(result)
 
 
 @recommender_app.command("rebuild")

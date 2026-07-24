@@ -12,3 +12,7 @@ Preferred deployment is same-domain/subpath routing. Separate service URLs are a
 ## Existing Portfolio Link
 
 The separate portfolio repository remains the public entrypoint. Its project card for **Indian Music Intelligence Platform** uses a `demo` click behavior and opens the local or deployed dashboard first. The music repo owns the platform implementation; the portfolio repo owns the card, navigation, and recruiter-facing project entry.
+
+## Admin Ops
+
+The v2 shell includes a local Admin Ops page for owner workflows. It calls protected FastAPI endpoints with the configured admin token to import sample data, run data quality checks, and inspect persisted job history.

@@ -16,6 +16,7 @@
         <a href="{% url 'music_explorer' %}" class="{% if active == 'explorer' %}active{% endif %}">Song Explorer</a>
         <a href="{% url 'music_artists' %}" class="{% if active == 'artists' %}active{% endif %}">Artists</a>
         <a href="{% url 'music_model_insights' %}" class="{% if active == 'model-insights' %}active{% endif %}">Model Insights</a>
+        <a href="{% url 'music_admin_ops' %}" class="{% if active == 'admin' %}active{% endif %}">Admin</a>
         <a href="{{ github_url }}" target="_blank" rel="noreferrer">GitHub</a>
         <a href="{{ portfolio_home_url }}">Portfolio Home</a>
         <a href="{{ portfolio_projects_url }}">Back to Projects</a>

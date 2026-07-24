@@ -34,8 +34,9 @@ This starts the services, runs migrations, imports sample data, runs quality che
 
 Open:
 
-- Music dashboard: `http://127.0.0.1:8000/music/`
+- Music dashboard: `http://127.0.0.1:8010/music/`
 - FastAPI docs: `http://127.0.0.1:8001/docs`
+- Admin ops: `http://127.0.0.1:8010/admin/`
 
 ## Existing Portfolio Integration
 
@@ -47,4 +48,4 @@ python manage.py seed_portfolio
 python manage.py runserver 127.0.0.1:8000
 ```
 
-The project card opens `http://127.0.0.1:8000/music/` for the local demo.
+The project card opens `http://127.0.0.1:8010/music/` for the local demo while the portfolio stays on `http://127.0.0.1:8000/`.

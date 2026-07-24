@@ -64,7 +64,8 @@ docker compose exec api python -m app.cli recommender rebuild
 4. Open:
 
 - FastAPI: `http://localhost:8001/docs`
-- Django music shell: `http://localhost:8000/music/`
+- Django music shell: `http://localhost:8010/music/`
+- Admin ops page: `http://localhost:8010/admin/`
 
 On Windows, the helper script runs the full local demo setup:
 
@@ -72,7 +73,7 @@ On Windows, the helper script runs the full local demo setup:
 .\scripts\local_demo.ps1
 ```
 
-The existing portfolio repo can seed a project card that opens the local dashboard at `http://127.0.0.1:8000/music/`.
+The existing portfolio repo can seed a project card that opens the local dashboard at `http://127.0.0.1:8010/music/` while the portfolio itself runs at `http://127.0.0.1:8000/`.
 
 ## v1.0 Archive
 
