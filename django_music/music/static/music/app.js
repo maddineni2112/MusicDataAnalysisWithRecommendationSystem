@@ -6,6 +6,16 @@ async function fetchJson(path) {
   return response.json();
 }
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[char]));
+}
+
 function mountOverview() {
   const node = document.querySelector('[data-widget="overview"]');
   if (!node) return;
@@ -55,7 +65,21 @@ function mountTrackTable() {
     if (selects[1].value) params.set("mood", selects[1].value);
     const q = params.toString() ? `?${params}` : "";
     fetchJson(`/api/tracks${q}`).then((data) => {
-      results.innerHTML = `<table><thead><tr><th>Song</th><th>Album</th><th>Year</th><th>Labels</th></tr></thead><tbody>${data.items.map((track) => `<tr><td>${track.name}</td><td>${track.album_name || ""}</td><td>${track.release_year || ""}</td><td>${(track.labels || []).map((l) => `<span class="badge">${l.dimension}: ${l.value} ${(l.confidence || 0).toFixed(2)}</span>`).join("")}</td></tr>`).join("")}</tbody></table>`;
+      results.innerHTML = `<table><thead><tr><th>Song</th><th>Album</th><th>Year</th><th>Labels</th><th></th></tr></thead><tbody>${data.items.map((track) => `<tr><td>${escapeHtml(track.name)}</td><td>${escapeHtml(track.album_name || "")}</td><td>${track.release_year || ""}</td><td>${(track.labels || []).map((l) => `<span class="badge">${escapeHtml(l.dimension)}: ${escapeHtml(l.value)} ${(l.confidence || 0).toFixed(2)}</span>`).join("")}</td><td><button data-track-id="${track.id}">Detail</button></td></tr>`).join("")}</tbody></table><div class="detail-panel"></div>`;
+      results.querySelectorAll("[data-track-id]").forEach((detailButton) => {
+        detailButton.addEventListener("click", () => {
+          fetchJson(`/api/tracks/${detailButton.dataset.trackId}/detail`).then((detail) => {
+            const panel = results.querySelector(".detail-panel");
+            panel.innerHTML = `
+              <h2>${escapeHtml(detail.track.name)}</h2>
+              <p>${escapeHtml((detail.artists || []).map((artist) => artist.name).join(", "))} · ${escapeHtml(detail.track.album_name || "Unknown album")} · ${detail.track.release_year || "Unknown year"}</p>
+              <h3>Source Playlists</h3>
+              <p>${(detail.playlists || []).map((playlist) => `<span class="badge">${escapeHtml(playlist.name)}</span>`).join("") || "No playlist lineage yet."}</p>
+              <h3>Similar Songs</h3>
+              <table><thead><tr><th>Song</th><th>Score</th><th>Why</th></tr></thead><tbody>${(detail.similar_tracks || []).map((item) => `<tr><td>${escapeHtml(item.track.name)}</td><td>${item.score}</td><td>${escapeHtml(item.reasons.join(", "))}</td></tr>`).join("")}</tbody></table>`;
+          });
+        });
+      });
     });
   };
   button.addEventListener("click", load);
@@ -94,8 +118,35 @@ function mountArtists() {
   if (!node) return;
   fetchJson("/api/artists").then((artists) => {
     node.innerHTML = artists.length
-      ? `<table><thead><tr><th>Artist</th><th>Genres</th></tr></thead><tbody>${artists.map((a) => `<tr><td>${a.name}</td><td>${(a.genres || []).join(", ")}</td></tr>`).join("")}</tbody></table>`
+      ? `<div class="toolbar"><button data-action="network">Load artist network</button></div><table><thead><tr><th>Artist</th><th>Genres</th><th></th></tr></thead><tbody>${artists.map((a) => `<tr><td>${escapeHtml(a.name)}</td><td>${escapeHtml((a.genres || []).join(", "))}</td><td><button data-artist-id="${a.id}">Detail</button></td></tr>`).join("")}</tbody></table><div class="detail-panel"></div>`
       : "<p>No artists imported yet.</p>";
+    const panel = node.querySelector(".detail-panel");
+    node.querySelector('[data-action="network"]').addEventListener("click", () => {
+      fetchJson("/api/artist-network").then((network) => {
+        panel.innerHTML = `
+          <h2>Artist Network</h2>
+          <p>${network.nodes.length} artists connected across ${network.track_count} tracks.</p>
+          <table><thead><tr><th>Source</th><th>Target</th><th>Shared Tracks</th></tr></thead><tbody>${network.edges.map((edge) => {
+            const source = network.nodes.find((node) => node.id === edge.source);
+            const target = network.nodes.find((node) => node.id === edge.target);
+            return `<tr><td>${escapeHtml(source ? source.name : edge.source)}</td><td>${escapeHtml(target ? target.name : edge.target)}</td><td>${edge.weight}</td></tr>`;
+          }).join("")}</tbody></table>`;
+      });
+    });
+    node.querySelectorAll("[data-artist-id]").forEach((detailButton) => {
+      detailButton.addEventListener("click", () => {
+        fetchJson(`/api/artists/${detailButton.dataset.artistId}/detail`).then((detail) => {
+          panel.innerHTML = `
+            <h2>${escapeHtml(detail.artist.name)}</h2>
+            <h3>Top Tracks</h3>
+            <table><thead><tr><th>Song</th><th>Year</th><th>Popularity</th></tr></thead><tbody>${detail.tracks.map((track) => `<tr><td>${escapeHtml(track.name)}</td><td>${track.release_year || ""}</td><td>${track.popularity ?? ""}</td></tr>`).join("")}</tbody></table>
+            <h3>Label Mix</h3>
+            <p>${detail.label_mix.map((label) => `<span class="badge">${escapeHtml(label.dimension)}: ${escapeHtml(label.value)} (${label.count})</span>`).join("") || "No labels yet."}</p>
+            <h3>Collaborators</h3>
+            <p>${detail.collaborators.map((artist) => `<span class="badge">${escapeHtml(artist.name)} (${artist.shared_tracks})</span>`).join("") || "No collaborations in this sample yet."}</p>`;
+        });
+      });
+    });
   });
 }
 
@@ -103,7 +154,17 @@ function mountModelInsights() {
   const node = document.querySelector('[data-widget="model-insights"]');
   if (!node) return;
   fetchJson("/api/model-insights").then((data) => {
-    node.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    node.innerHTML = `
+      <div class="grid">
+        <article class="card"><div class="metric">${data.dataset.tracks}</div><div class="label">Tracks Evaluated</div></article>
+        <article class="card"><div class="metric">${data.dataset.labels}</div><div class="label">Inferred Labels</div></article>
+        <article class="card"><div class="metric">${data.dataset.label_density}</div><div class="label">Labels Per Track</div></article>
+      </div>
+      <h2>Recommender</h2>
+      <p>${escapeHtml(data.recommender)} uses ${data.signals.map(escapeHtml).join(", ")}.</p>
+      <h2>Evaluation</h2>
+      <p>${escapeHtml(data.evaluation_plan)}</p>
+      <pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>`;
   });
 }
 
