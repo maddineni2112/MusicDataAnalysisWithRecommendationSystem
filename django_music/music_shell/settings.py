@@ -7,6 +7,9 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-music-sh
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")]
 API_BASE_URL = os.environ.get("PUBLIC_API_BASE_URL", os.environ.get("API_BASE_URL", "http://localhost:8001"))
+PORTFOLIO_HOME_URL = os.environ.get("PORTFOLIO_HOME_URL", "http://127.0.0.1:8000/#home")
+PORTFOLIO_PROJECTS_URL = os.environ.get("PORTFOLIO_PROJECTS_URL", "http://127.0.0.1:8000/#projects")
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()]
 
 INSTALLED_APPS = [
     "django.contrib.staticfiles",
@@ -31,4 +34,5 @@ TEMPLATES = [
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

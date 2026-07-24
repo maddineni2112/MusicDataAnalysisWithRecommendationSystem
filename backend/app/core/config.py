@@ -9,6 +9,11 @@ class Settings(BaseSettings):
     spotify_client_id: str = ""
     spotify_client_secret: str = ""
     artifact_dir: str = "artifacts"
+    backend_cors_origins: str = "http://localhost:8000,http://127.0.0.1:8000,http://localhost:8010,http://127.0.0.1:8010"
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [origin.strip() for origin in self.backend_cors_origins.split(",") if origin.strip()]
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

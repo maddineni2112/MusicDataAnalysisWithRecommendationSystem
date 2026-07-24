@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render
 
 
@@ -6,10 +7,14 @@ def base_context(active: str) -> dict:
     return {
         "active": active,
         "api_base_url": settings.API_BASE_URL,
-        "portfolio_home_url": "http://127.0.0.1:8000/#home",
-        "portfolio_projects_url": "http://127.0.0.1:8000/#projects",
+        "portfolio_home_url": settings.PORTFOLIO_HOME_URL,
+        "portfolio_projects_url": settings.PORTFOLIO_PROJECTS_URL,
         "github_url": "https://github.com/maddineni2112/MusicDataAnalysisWithRecommendationSystem",
     }
+
+
+def health(request):
+    return JsonResponse({"status": "ok", "service": "indian-music-intelligence-shell"})
 
 
 def dashboard(request):

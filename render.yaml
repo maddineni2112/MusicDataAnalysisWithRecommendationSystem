@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: indian-music-intelligence-api
+    runtime: docker
+    rootDir: backend
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: indian-music-intelligence-db
+          property: connectionString
+      - key: ADMIN_SHARED_SECRET
+        sync: false
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+      - key: ARTIFACT_DIR
+        value: artifacts
+      - key: BACKEND_CORS_ORIGINS
+        sync: false
+
+  - type: web
+    name: indian-music-intelligence-shell
+    runtime: docker
+    rootDir: django_music
+    plan: free
+    healthCheckPath: /health/
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: indian-music-intelligence-api
+          property: host
+      - key: PUBLIC_API_BASE_URL
+        sync: false
+      - key: PORTFOLIO_HOME_URL
+        sync: false
+      - key: PORTFOLIO_PROJECTS_URL
+        sync: false
+
+databases:
+  - name: indian-music-intelligence-db
+    plan: free
