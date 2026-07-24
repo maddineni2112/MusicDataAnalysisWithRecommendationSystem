@@ -85,6 +85,9 @@ The original academic project is preserved under `archive/v1.0/`. It includes th
 
 - [Technical report source](docs/technical-report-v2.md)
 - [Pitch deck source](docs/pitch-deck-v2.md)
+- [Exported PDF report](docs/exports/Indian_Music_Intelligence_Platform_v2_Report.pdf)
+- [Exported PPT pitch deck](docs/exports/Indian_Music_Intelligence_Platform_v2_Pitch_Deck.pptx)
+- [Demo screenshots](docs/screenshots/README.md)
 - [Acceptance checklist](docs/acceptance-checklist.md)
 - [Architecture](docs/architecture.md)
 - [Setup](docs/setup.md)

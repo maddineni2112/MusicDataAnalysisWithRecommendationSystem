@@ -105,6 +105,13 @@ input, select, button {
   background: #0c110f;
   color: var(--text);
 }
+input[aria-label="Seed track ID"] {
+  flex: 0 0 195px;
+}
+input[aria-label="Natural language query"] {
+  flex: 1 1 420px;
+  min-width: min(420px, 100%);
+}
 button {
   background: var(--accent);
   color: #061009;
@@ -119,6 +126,7 @@ th, td {
   padding: 10px;
   border-bottom: 1px solid var(--line);
   text-align: left;
+  vertical-align: top;
 }
 .toolbar {
   display: flex;
@@ -172,4 +180,19 @@ pre {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 14px;
+}
+code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.recommender-table {
+  table-layout: fixed;
+}
+.recommender-table .song-col { width: 18%; }
+.recommender-table .score-col { width: 8%; }
+.recommender-table .reasons-col { width: 28%; }
+.recommender-table .breakdown-col { width: 46%; }
+.recommender-table code {
+  display: block;
+  line-height: 1.45;
 }

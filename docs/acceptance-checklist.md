@@ -35,6 +35,9 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - Render blueprint exists.
 - technical report source exists.
 - pitch deck source exists.
+- exported PDF report exists under `docs/exports/`.
+- exported PPT pitch deck exists under `docs/exports/`.
+- local demo screenshots exist under `docs/screenshots/`.
 
 ## Still Required for Full v2.0
 
@@ -46,9 +49,6 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - popularity prediction demo if official popularity data is sufficient
 - production deployment
 - deployed URL wired into portfolio card
-- final screenshots from real deployed/local data
-- PDF report export
-- PPT export
 - `v2.0-alpha`, `v2.0-beta`, and `v2.0` tags at appropriate release points
 - final merge strategy into `main`
 

@@ -52,3 +52,17 @@ python manage.py runserver 127.0.0.1:8000
 ```
 
 The project card opens `http://127.0.0.1:8010/music/` for the local demo while the portfolio stays on `http://127.0.0.1:8000/`.
+
+## Portfolio Deliverables
+
+Export the report PDF and pitch deck PPTX:
+
+```powershell
+.\scripts\export_deliverables.ps1 -Python "C:\Users\SampathNagaMaddineni\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
+```
+
+Capture local demo screenshots after both the music shell and portfolio are running:
+
+```powershell
+.\scripts\capture_demo_screenshots.ps1
+```

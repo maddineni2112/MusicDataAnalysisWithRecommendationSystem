@@ -121,7 +121,7 @@ function mountTrackTable() {
             const panel = results.querySelector(".detail-panel");
             panel.innerHTML = `
               <h2>${escapeHtml(detail.track.name)}</h2>
-              <p>${escapeHtml((detail.artists || []).map((artist) => artist.name).join(", "))} · ${escapeHtml(detail.track.album_name || "Unknown album")} · ${detail.track.release_year || "Unknown year"}</p>
+              <p>${escapeHtml((detail.artists || []).map((artist) => artist.name).join(", "))} | ${escapeHtml(detail.track.album_name || "Unknown album")} | ${detail.track.release_year || "Unknown year"}</p>
               <h3>Effective Labels</h3>
               <p>${(detail.effective_labels || []).map((label) => `<span class="badge">${escapeHtml(label.dimension)}: ${escapeHtml(label.value)} ${label.source === "override" ? "(override)" : ""}</span>`).join("") || "No labels yet."}</p>
               <h3>Source Playlists</h3>
@@ -152,16 +152,20 @@ function mountRecommender() {
   const select = node.querySelector("select");
   const button = node.querySelector("button");
   const results = node.querySelector(".results");
-  button.addEventListener("click", () => {
+  const loadRecommendations = () => {
     if (!inputs[0].value) return;
     const params = new URLSearchParams({ track_id: inputs[0].value, limit: select.value });
     if (inputs[1].value) params.set("query", inputs[1].value);
     fetchJson(`/api/recommendations?${params}`).then((data) => {
       results.innerHTML = data.items.length
-        ? `<p>Parsed filters: ${escapeHtml(JSON.stringify(data.parsed_query_filters))}</p><table><thead><tr><th>Song</th><th>Score</th><th>Reasons</th><th>Breakdown</th></tr></thead><tbody>${data.items.map((item) => `<tr><td>${escapeHtml(item.track.name)}</td><td>${item.score}</td><td>${escapeHtml(item.reasons.join(", "))}</td><td><code>${escapeHtml(JSON.stringify(item.score_breakdown))}</code></td></tr>`).join("")}</tbody></table>`
+        ? `<p>Parsed filters: ${escapeHtml(JSON.stringify(data.parsed_query_filters))}</p><table class="recommender-table"><colgroup><col class="song-col"><col class="score-col"><col class="reasons-col"><col class="breakdown-col"></colgroup><thead><tr><th>Song</th><th>Score</th><th>Reasons</th><th>Breakdown</th></tr></thead><tbody>${data.items.map((item) => `<tr><td>${escapeHtml(item.track.name)}</td><td>${item.score}</td><td>${escapeHtml(item.reasons.join(", "))}</td><td><code>${escapeHtml(JSON.stringify(item.score_breakdown))}</code></td></tr>`).join("")}</tbody></table>`
         : "<p>No recommendations found yet. Import more tracks with shared labels.</p>";
     });
-  });
+  };
+  button.addEventListener("click", loadRecommendations);
+  inputs[0].value = "1";
+  inputs[1].value = "romantic Telugu songs from the 2010s";
+  loadRecommendations();
 }
 
 function mountArtists() {

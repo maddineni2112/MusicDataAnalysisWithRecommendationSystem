@@ -144,6 +144,8 @@ The local demo includes:
 - model insights
 - admin operations console
 
+Current demo screenshots are stored under `docs/screenshots/` and cover the portfolio project card, dashboard, song explorer, artist explorer, recommender, model insights, and admin operations pages.
+
 ## Admin/Data Ops
 
 Admin Ops supports:
@@ -198,7 +200,7 @@ Planned improvements:
 - popularity prediction as a secondary ML demo
 - stronger artist collaboration graph
 - deployed production instance
-- refreshed PDF report and PPT exports from these Markdown sources
+- production screenshots after deployment
 
 ## Current Local Demo
 
@@ -208,3 +210,8 @@ Local URLs:
 - Music dashboard: `http://127.0.0.1:8010/music/`
 - Admin Ops: `http://127.0.0.1:8010/admin/`
 - API docs: `http://127.0.0.1:8001/docs`
+
+Exported deliverables:
+
+- PDF report: `docs/exports/Indian_Music_Intelligence_Platform_v2_Report.pdf`
+- PPT pitch deck: `docs/exports/Indian_Music_Intelligence_Platform_v2_Pitch_Deck.pptx`
