@@ -1,0 +1,14 @@
+alembic==1.14.0
+fastapi==0.115.6
+httpx==0.28.1
+numpy==2.2.1
+pandas==2.2.3
+psycopg[binary]==3.2.3
+pydantic-settings==2.7.1
+python-multipart==0.0.20
+scikit-learn==1.6.0
+SQLAlchemy==2.0.36
+typer==0.15.1
+uvicorn[standard]==0.34.0
+pytest==8.3.4
+ruff==0.8.4

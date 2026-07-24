@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Indian Music Intelligence Platform</title>
+    <link rel="stylesheet" href="{% static 'music/site.css' %}">
+  </head>
+  <body data-api-base="{{ api_base_url }}">
+    <header class="app-header">
+      <a class="brand" href="{% url 'music_dashboard' %}">MNS Music Intelligence</a>
+      <nav class="nav">
+        <a href="{% url 'music_dashboard' %}" class="{% if active == 'dashboard' %}active{% endif %}">Dashboard</a>
+        <a href="{% url 'music_recommender' %}" class="{% if active == 'recommender' %}active{% endif %}">Recommender</a>
+        <a href="{% url 'music_explorer' %}" class="{% if active == 'explorer' %}active{% endif %}">Song Explorer</a>
+        <a href="{% url 'music_artists' %}" class="{% if active == 'artists' %}active{% endif %}">Artists</a>
+        <a href="{% url 'music_model_insights' %}" class="{% if active == 'model-insights' %}active{% endif %}">Model Insights</a>
+        <a href="{{ github_url }}" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="{{ portfolio_home_url }}">Portfolio Home</a>
+        <a href="{{ portfolio_projects_url }}">Back to Projects</a>
+      </nav>
+    </header>
+    {% block content %}{% endblock %}
+    <script src="{% static 'music/app.js' %}"></script>
+  </body>
+</html>

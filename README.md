@@ -1,77 +1,75 @@
-# Music Data Analysis and Song Recommendation System
+# Indian Music Intelligence Platform
 
-This project analyzes Spotify track data and builds a recommendation workflow using PySpark, machine learning, dimensionality reduction, and clustering. The goal is to understand which audio features relate to song popularity and recommend similar tracks based on musical characteristics.
+Version 2.0 transforms the original Spotify music-analysis notebook into a full-stack ML platform for Indian music discovery, analytics, and recommendations. The project is designed as a portfolio-ready capstone for ML/data and Python backend roles.
 
-## Project Highlights
+## What This Platform Does
 
-- Analyzed Spotify audio features such as danceability, energy, acousticness, tempo, valence, loudness, and popularity.
-- Cleaned and transformed the dataset using Pandas and PySpark.
-- Built exploratory visualizations for popularity distribution, yearly trends, feature relationships, and correlations.
-- Compared Linear Regression and Random Forest Regression for popularity prediction.
-- Used PCA to reduce audio-feature dimensions while preserving most of the variance.
-- Built a content-based recommendation function that finds similar songs using distance between PCA vectors.
-- Applied K-Means clustering to group songs with similar audio profiles.
+- Collects and imports Indian music metadata from Spotify-style playlist sources and public datasets.
+- Stores normalized tracks, artists, albums, playlists, source lineage, labels, model runs, job logs, and recommendation outputs in PostgreSQL.
+- Infers language, region, music type, mood, and genre/style labels with confidence scores.
+- Provides public read-only dashboards, song/artist explorers, model insights, and hybrid recommendations.
+- Provides owner-only data-ops workflows for imports, quality checks, feature building, training, and recommender rebuilds.
 
-## Methods Used
+## Architecture
 
-| Area | Techniques |
-| --- | --- |
-| Data processing | Pandas, PySpark DataFrames |
-| Exploration | Correlation analysis, distribution plots, pair plots, trend analysis |
-| Prediction | Linear Regression, Random Forest Regression |
-| Evaluation | MSE, RMSE |
-| Recommendation | PCA feature vectors, L2 distance |
-| Clustering | K-Means, silhouette score |
+```text
+Portfolio/Django shell + React islands
+            |
+            v
+FastAPI ML/API service ---- PostgreSQL
+            |
+            v
+Typer CLI jobs, imports, labeling, quality checks, recommender artifacts
+```
 
-## Key Results
-
-- Random Forest Regression performed slightly better than Linear Regression for predicting popularity.
-- PCA was used to create compact song representations for similarity matching.
-- K-Means clustering identified groups of songs with similar audio characteristics.
-- The recommendation workflow can return the nearest songs for a given input track based on PCA feature distance.
-
-## Repository Structure
+## Repository Layout
 
 ```text
 .
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── docs/
-│   ├── MusicDataAnalysisNRecommendationSystem_report.pdf
-│   └── Music_Data_Analysis_Song_Recommendation.pptx
-├── notebooks/
-│   └── MusicDataAnalysisNRecommendationSystem_code.ipynb
-└── src/
-    └── recommender.py
+├── archive/v1.0/          # Preserved original notebook/report/PPT
+├── backend/               # FastAPI, SQLAlchemy, ML services, Typer CLI
+├── django_music/          # Django page shell/templates for portfolio integration
+├── frontend/              # Vite React island source
+├── data/sample/           # Small committed demo data
+├── docs/                  # Architecture, setup, API, schema, modeling docs
+├── docker-compose.yml
+└── .env.example
 ```
 
-## How to Run
+## Quick Start
 
-1. Install dependencies:
+1. Copy environment files:
 
 ```bash
-pip install -r requirements.txt
+copy .env.example .env
+copy backend\.env.example backend\.env
+copy django_music\.env.example django_music\.env
 ```
 
-2. Add the Spotify dataset locally.
-
-The notebook expects a CSV file similar to `Spotify_data.csv`. The dataset is not included in this repository, so update the file path in the notebook before running it.
-
-3. Open and run the notebook:
+2. Start local services:
 
 ```bash
-jupyter notebook notebooks/MusicDataAnalysisNRecommendationSystem_code.ipynb
+docker compose up --build
 ```
 
-## Notes
+3. Run migrations and import sample data:
 
-This project is a content-based recommendation system. It recommends songs using audio-feature similarity rather than user listening behavior. Production recommendation systems usually combine content-based methods with collaborative filtering, user-item interaction data, ranking models, and feedback loops.
+```bash
+docker compose exec api alembic upgrade head
+docker compose exec api python -m app.cli import csv data/sample/indian_music_sample.csv --source-name "Sample Indian Music Dataset"
+docker compose exec api python -m app.cli quality run
+docker compose exec api python -m app.cli recommender rebuild
+```
 
-## Future Improvements
+4. Open:
 
-- Add a reproducible dataset download or data sample.
-- Convert the notebook workflow into a full Python pipeline.
-- Add user interaction data for collaborative filtering.
-- Build a small Streamlit app for interactive song recommendations.
-- Track experiments and model metrics in a structured format.
+- FastAPI: `http://localhost:8001/docs`
+- Django music shell: `http://localhost:8000/music/`
+
+## v1.0 Archive
+
+The original academic project is preserved under `archive/v1.0/`. It includes the PySpark notebook, report, presentation, and original recommender helper.
+
+## Development Status
+
+This branch implements the v2 foundation: schema, APIs, CLI, sample imports, automatic labeling rules, quality checks, hybrid recommender scaffolding, documentation, and portfolio integration shell. Spotify live collection remains credential-dependent and is designed not to block public-dataset development.

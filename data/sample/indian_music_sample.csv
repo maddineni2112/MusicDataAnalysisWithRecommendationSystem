@@ -1,0 +1,6 @@
+external_id,name,artists,album_name,release_date,release_year,duration_ms,popularity,explicit,spotify_url,language,music_type,mood
+sample_telugu_001,Romantic Telugu Melody,S. P. Sample,Tollywood Love Hits,2018-01-01,2018,210000,71,false,https://open.spotify.com/track/sample_telugu_001,Telugu,film,romantic
+sample_hindi_001,Hindi Party Night,Arijit Sample,Bollywood Dance Mix,2021-05-10,2021,198000,82,false,https://open.spotify.com/track/sample_hindi_001,Hindi,film,energetic
+sample_tamil_001,Tamil Indie Rain,Anirudh Sample,Kollywood Indie Sessions,2020-08-15,2020,224000,67,false,https://open.spotify.com/track/sample_tamil_001,Tamil,indie,calm
+sample_punjabi_001,Punjabi Rap Drive,Diljit Sample,North Beats,2022-11-20,2022,205000,76,false,https://open.spotify.com/track/sample_punjabi_001,Punjabi,rap_hiphop,energetic
+sample_malayalam_001,Malayalam Devotional Dawn,KS Sample,Kerala Devotional Classics,2014-03-02,2014,250000,58,false,https://open.spotify.com/track/sample_malayalam_001,Malayalam,devotional,devotional

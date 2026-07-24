@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
 
 # Virtual environments
 .venv/
@@ -9,12 +11,30 @@ venv/
 env/
 
 # Local data
-data/
+data/raw/
+data/processed/
+data/dumps/
+artifacts/
+models/
 *.csv
 *.parquet
+!data/sample/*.csv
+!data/sample/*.json
 
 # OS/editor files
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# Environment
+.env
+.env.*
+!.env.example
+!backend/.env.example
+!django_music/.env.example
+
+# Frontend
+node_modules/
+dist/
+*.tsbuildinfo
