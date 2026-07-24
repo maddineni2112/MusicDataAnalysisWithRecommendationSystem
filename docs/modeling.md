@@ -18,3 +18,7 @@ Planned improvements:
 - pgvector similarity when hosting supports it
 - playlist holdout evaluation
 - popularity prediction as a secondary demo when official popularity exists
+
+## Label Overrides
+
+Automatic labels remain the default source of truth for scale. Owner/admin overrides are stored separately in `label_overrides`, replacing the effective value for a dimension without deleting inferred label evidence. Recommender filters and scoring use effective labels so owner corrections are reflected in demo behavior.

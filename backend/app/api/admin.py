@@ -8,6 +8,7 @@ from app.db.session import get_db
 from app.services.evaluation import evaluate_recommender
 from app.services.imports import import_csv, import_json, import_playlist_json
 from app.services.jobs import list_jobs, run_logged_job
+from app.services.labels import apply_label_override, list_label_overrides
 from app.services.quality import run_quality_checks
 from app.services.spotify import collect_spotify_playlists, read_playlist_ids
 
@@ -95,8 +96,16 @@ def jobs(_: None = Depends(require_admin), db: Session = Depends(get_db)) -> dic
 
 
 @router.post("/labels/override")
-def override_label(_: None = Depends(require_admin)) -> dict:
-    return {"status": "accepted", "message": "Label override persistence is planned after the owner review UI is connected."}
+def override_label(track_id: int, dimension: str, value: str, reason: str | None = None, _: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    try:
+        return {"status": "completed", "override": apply_label_override(db, track_id=track_id, dimension=dimension, value=value, reason=reason)}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.get("/labels/overrides")
+def label_overrides(_: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    return {"items": list_label_overrides(db)}
 
 
 @router.post("/quality/run")

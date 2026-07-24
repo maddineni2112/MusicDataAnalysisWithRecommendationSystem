@@ -6,6 +6,7 @@ from app.db.session import get_db
 from app.models.entities import Artist, DataQualityResult, InferredLabel, ModelRun, Playlist, PlaylistTrack, Track, TrackArtist
 from app.schemas.entities import ArtistOut, DashboardOverview, PaginatedPlaylists, PaginatedTracks, TrackOut
 from app.services.dashboard import analytics_summary, language_trends, overview
+from app.services.labels import effective_labels_for_track, label_overrides_for_track
 from app.services.nl_query import parse_recommendation_query
 from app.services.quality import quality_summary
 from app.services.recommender import recommend_tracks
@@ -69,6 +70,8 @@ def get_track_detail(track_id: int, db: Session = Depends(get_db)) -> dict:
     recommendations = recommend_tracks(db, track_id, limit=5)
     return {
         "track": TrackOut.model_validate(track),
+        "effective_labels": effective_labels_for_track(db, track_id),
+        "label_overrides": label_overrides_for_track(db, track_id),
         "artists": [dict(row) for row in artists],
         "playlists": [dict(row) for row in playlists],
         "similar_tracks": [

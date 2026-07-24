@@ -122,6 +122,8 @@ function mountTrackTable() {
             panel.innerHTML = `
               <h2>${escapeHtml(detail.track.name)}</h2>
               <p>${escapeHtml((detail.artists || []).map((artist) => artist.name).join(", "))} · ${escapeHtml(detail.track.album_name || "Unknown album")} · ${detail.track.release_year || "Unknown year"}</p>
+              <h3>Effective Labels</h3>
+              <p>${(detail.effective_labels || []).map((label) => `<span class="badge">${escapeHtml(label.dimension)}: ${escapeHtml(label.value)} ${label.source === "override" ? "(override)" : ""}</span>`).join("") || "No labels yet."}</p>
               <h3>Source Playlists</h3>
               <p>${(detail.playlists || []).map((playlist) => `<span class="badge">${escapeHtml(playlist.name)}</span>`).join("") || "No playlist lineage yet."}</p>
               <h3>Similar Songs</h3>
@@ -238,6 +240,19 @@ function mountAdminOps() {
       <button data-action="models">Evaluate recommender</button>
       <button data-action="jobs">Refresh job history</button>
     </div>
+    <div class="toolbar">
+      <input aria-label="Override track ID" data-field="track-id" placeholder="Track ID">
+      <select aria-label="Override dimension" data-field="dimension">
+        <option value="language">language</option>
+        <option value="mood">mood</option>
+        <option value="music_type">music_type</option>
+        <option value="region">region</option>
+      </select>
+      <input aria-label="Override value" data-field="value" placeholder="Override value">
+      <input aria-label="Override reason" data-field="reason" placeholder="Reason">
+      <button data-action="override">Save label override</button>
+      <button data-action="overrides">Refresh overrides</button>
+    </div>
     <div class="results"></div>`;
   const token = node.querySelector("input");
   const results = node.querySelector(".results");
@@ -252,6 +267,13 @@ function mountAdminOps() {
         : "<p>No jobs logged yet.</p>";
     });
   };
+  const loadOverrides = () => {
+    adminFetch("/api/admin/labels/overrides").then((data) => {
+      results.innerHTML = data.items && data.items.length
+        ? `<table><thead><tr><th>Track</th><th>Dimension</th><th>Value</th><th>Reason</th><th>Created</th></tr></thead><tbody>${data.items.map((item) => `<tr><td>${escapeHtml(item.track_name || item.track_id)}</td><td>${escapeHtml(item.dimension)}</td><td>${escapeHtml(item.value)}</td><td>${escapeHtml(item.reason || "")}</td><td>${escapeHtml(item.created_at || "")}</td></tr>`).join("")}</tbody></table>`
+        : "<p>No label overrides yet.</p>";
+    });
+  };
   node.querySelector('[data-action="import"]').addEventListener("click", () => {
     adminFetch('/api/admin/import/csv?path=data/sample/indian_music_sample.csv&source_name=Sample%20Indian%20Music%20Dataset', { method: "POST" }).then(loadJobs);
   });
@@ -261,6 +283,20 @@ function mountAdminOps() {
   node.querySelector('[data-action="models"]').addEventListener("click", () => {
     adminFetch("/api/admin/models/train", { method: "POST" }).then(loadJobs);
   });
+  node.querySelector('[data-action="override"]').addEventListener("click", () => {
+    const trackId = node.querySelector('[data-field="track-id"]').value;
+    const dimension = node.querySelector('[data-field="dimension"]').value;
+    const value = node.querySelector('[data-field="value"]').value;
+    const reason = node.querySelector('[data-field="reason"]').value;
+    if (!trackId || !value) {
+      results.innerHTML = "<p>Track ID and override value are required.</p>";
+      return;
+    }
+    const params = new URLSearchParams({ track_id: trackId, dimension, value });
+    if (reason) params.set("reason", reason);
+    adminFetch(`/api/admin/labels/override?${params}`, { method: "POST" }).then(loadOverrides);
+  });
+  node.querySelector('[data-action="overrides"]').addEventListener("click", loadOverrides);
   node.querySelector('[data-action="jobs"]').addEventListener("click", loadJobs);
   loadJobs();
 }

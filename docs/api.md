@@ -36,4 +36,6 @@ Current admin endpoints:
 - `POST /api/admin/spotify/collect`
 - `POST /api/admin/quality/run`
 - `POST /api/admin/models/train`
+- `POST /api/admin/labels/override`
+- `GET /api/admin/labels/overrides`
 - `GET /api/admin/jobs`

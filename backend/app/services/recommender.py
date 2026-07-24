@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.entities import InferredLabel, Track
+from app.services.labels import effective_label_map
 
 
 DEFAULT_WEIGHTS = {
@@ -23,7 +24,7 @@ def recommend_tracks(db: Session, seed_track_id: int, limit: int = 10, filters: 
     seed = db.get(Track, seed_track_id)
     if seed is None:
         return []
-    seed_labels = label_map(seed.labels)
+    seed_labels = effective_label_map(db, seed.id)
     candidates = db.scalars(
         select(Track)
         .options(selectinload(Track.labels))
@@ -33,9 +34,10 @@ def recommend_tracks(db: Session, seed_track_id: int, limit: int = 10, filters: 
     scored = []
     artist_counter: Counter[str] = Counter()
     for candidate in candidates:
-        if not passes_filters(candidate, filters):
+        candidate_labels = effective_label_map(db, candidate.id)
+        if not passes_filters(candidate, filters, candidate_labels):
             continue
-        score, reasons, breakdown = score_candidate(seed, seed_labels, candidate)
+        score, reasons, breakdown = score_candidate(seed, seed_labels, candidate, candidate_labels)
         if score <= 0:
             continue
         artist_key = candidate.album_name or "unknown"
@@ -48,8 +50,8 @@ def recommend_tracks(db: Session, seed_track_id: int, limit: int = 10, filters: 
     return scored[:limit]
 
 
-def score_candidate(seed: Track, seed_labels: dict[str, set[str]], candidate: Track) -> tuple[float, list[str], dict]:
-    candidate_labels = label_map(candidate.labels)
+def score_candidate(seed: Track, seed_labels: dict[str, set[str]], candidate: Track, candidate_labels: dict[str, set[str]] | None = None) -> tuple[float, list[str], dict]:
+    candidate_labels = candidate_labels or label_map(candidate.labels)
     score = 0.0
     reasons = []
     breakdown = {}
@@ -84,8 +86,8 @@ def label_map(labels: list[InferredLabel]) -> dict[str, set[str]]:
     return mapped
 
 
-def passes_filters(track: Track, filters: dict) -> bool:
-    labels = label_map(track.labels)
+def passes_filters(track: Track, filters: dict, labels: dict[str, set[str]] | None = None) -> bool:
+    labels = labels or label_map(track.labels)
     for key in ["language", "mood", "music_type", "region"]:
         requested = filters.get(key)
         if requested and requested not in labels.get(key, set()):
