@@ -239,6 +239,8 @@ function mountAdminOps() {
       <button data-action="quality">Run quality checks</button>
       <button data-action="models">Evaluate recommender</button>
       <button data-action="jobs">Refresh job history</button>
+      <button data-action="model-runs">Model runs</button>
+      <button data-action="quality-summary">Quality summary</button>
     </div>
     <div class="toolbar">
       <input aria-label="Override track ID" data-field="track-id" placeholder="Track ID">
@@ -263,8 +265,36 @@ function mountAdminOps() {
   const loadJobs = () => {
     adminFetch("/api/admin/jobs").then((data) => {
       results.innerHTML = data.items && data.items.length
-        ? `<table><thead><tr><th>ID</th><th>Job</th><th>Status</th><th>Read</th><th>Written</th><th>Skipped</th></tr></thead><tbody>${data.items.map((job) => `<tr><td>${job.id}</td><td>${job.job_type}</td><td>${job.status}</td><td>${job.rows_read}</td><td>${job.rows_written}</td><td>${job.rows_skipped}</td></tr>`).join("")}</tbody></table>`
+        ? `<table><thead><tr><th>ID</th><th>Job</th><th>Status</th><th>Read</th><th>Written</th><th>Skipped</th><th></th></tr></thead><tbody>${data.items.map((job) => `<tr><td>${job.id}</td><td>${job.job_type}</td><td>${job.status}</td><td>${job.rows_read}</td><td>${job.rows_written}</td><td>${job.rows_skipped}</td><td><button data-job-id="${job.id}">Detail</button></td></tr>`).join("")}</tbody></table><div class="detail-panel"></div>`
         : "<p>No jobs logged yet.</p>";
+      results.querySelectorAll("[data-job-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          adminFetch(`/api/admin/jobs/${button.dataset.jobId}`).then((job) => {
+            const panel = results.querySelector(".detail-panel");
+            panel.innerHTML = `
+              <h2>${escapeHtml(job.job_type)} #${job.id}</h2>
+              <p>Status ${escapeHtml(job.status)} - read ${job.rows_read}, wrote ${job.rows_written}, skipped ${job.rows_skipped}, failures ${job.failure_count}</p>
+              <h3>Parameters</h3>
+              <pre>${escapeHtml(JSON.stringify(job.parameters, null, 2))}</pre>
+              <h3>Events</h3>
+              ${job.events.length ? `<table><thead><tr><th>Level</th><th>Message</th><th>Payload</th></tr></thead><tbody>${job.events.map((event) => `<tr><td>${escapeHtml(event.level)}</td><td>${escapeHtml(event.message)}</td><td><code>${escapeHtml(JSON.stringify(event.payload))}</code></td></tr>`).join("")}</tbody></table>` : "<p>No events stored for this job.</p>"}`;
+          });
+        });
+      });
+    });
+  };
+  const loadModelRuns = () => {
+    adminFetch("/api/admin/models/runs").then((data) => {
+      results.innerHTML = data.items && data.items.length
+        ? `<table><thead><tr><th>ID</th><th>Model</th><th>Version</th><th>Created</th><th>Metrics</th></tr></thead><tbody>${data.items.map((run) => `<tr><td>${run.id}</td><td>${escapeHtml(run.model_type)}</td><td>${escapeHtml(run.version)}</td><td>${escapeHtml(run.created_at || "")}</td><td><code>${escapeHtml(JSON.stringify(run.metrics))}</code></td></tr>`).join("")}</tbody></table>`
+        : "<p>No model runs yet. Run Evaluate recommender first.</p>";
+    });
+  };
+  const loadQualitySummary = () => {
+    fetchJson("/api/data-quality/summary").then((data) => {
+      results.innerHTML = data.checks && data.checks.length
+        ? `<table><thead><tr><th>Check</th><th>Status</th><th>Count</th><th>Severity</th></tr></thead><tbody>${data.checks.map((check) => `<tr><td>${escapeHtml(check.name)}</td><td>${escapeHtml(check.status)}</td><td>${check.count}</td><td>${escapeHtml(check.severity)}</td></tr>`).join("")}</tbody></table>`
+        : "<p>No quality checks stored yet.</p>";
     });
   };
   const loadOverrides = () => {
@@ -283,6 +313,8 @@ function mountAdminOps() {
   node.querySelector('[data-action="models"]').addEventListener("click", () => {
     adminFetch("/api/admin/models/train", { method: "POST" }).then(loadJobs);
   });
+  node.querySelector('[data-action="model-runs"]').addEventListener("click", loadModelRuns);
+  node.querySelector('[data-action="quality-summary"]').addEventListener("click", loadQualitySummary);
   node.querySelector('[data-action="override"]').addEventListener("click", () => {
     const trackId = node.querySelector('[data-field="track-id"]').value;
     const dimension = node.querySelector('[data-field="dimension"]').value;

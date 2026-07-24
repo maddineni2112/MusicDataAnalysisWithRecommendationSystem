@@ -7,7 +7,7 @@ from app.core.config import get_settings
 from app.db.session import get_db
 from app.services.evaluation import evaluate_recommender
 from app.services.imports import import_csv, import_json, import_playlist_json
-from app.services.jobs import list_jobs, run_logged_job
+from app.services.jobs import get_job, list_jobs, list_model_runs, run_logged_job
 from app.services.labels import apply_label_override, list_label_overrides
 from app.services.quality import run_quality_checks
 from app.services.spotify import collect_spotify_playlists, read_playlist_ids
@@ -93,6 +93,19 @@ def rebuild_recommendations(_: None = Depends(require_admin)) -> dict:
 @router.get("/jobs")
 def jobs(_: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
     return {"items": list_jobs(db)}
+
+
+@router.get("/jobs/{job_id}")
+def job_detail(job_id: int, _: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    job = get_job(db, job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return job
+
+
+@router.get("/models/runs")
+def model_runs(_: None = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    return {"items": list_model_runs(db)}
 
 
 @router.post("/labels/override")
