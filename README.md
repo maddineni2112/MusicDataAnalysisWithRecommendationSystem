@@ -109,6 +109,7 @@ The original academic project is preserved under `archive/v1.0/`. It includes th
 - [Modeling](docs/modeling.md)
 - [Deployment](docs/deployment.md)
 - [v1-to-v2 evolution](docs/v1-to-v2-evolution.md)
+- [v2.0-alpha release notes](docs/releases/v2.0-alpha.md)
 
 ## Development Status
 

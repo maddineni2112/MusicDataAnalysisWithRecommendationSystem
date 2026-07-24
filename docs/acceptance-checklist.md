@@ -41,6 +41,7 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - exported PDF report exists under `docs/exports/`.
 - exported PPT pitch deck exists under `docs/exports/`.
 - local demo screenshots exist under `docs/screenshots/`.
+- `v2.0-alpha` release notes exist.
 
 ## Still Required for Full v2.0
 
@@ -52,7 +53,8 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - popularity prediction demo if official popularity data is sufficient
 - production deployment
 - deployed URL wired into portfolio card
-- `v2.0-alpha`, `v2.0-beta`, and `v2.0` tags at appropriate release points
+- `v2.0-alpha` tag
+- `v2.0-beta` and `v2.0` tags at appropriate release points
 - final merge strategy into `main`
 
 ## Current Local Demo URLs
