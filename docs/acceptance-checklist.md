@@ -31,6 +31,7 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - TF-IDF text similarity feature build exists.
 - local vector-artifact fallback exists under ignored `artifacts/`.
 - model insights show saved evaluation metrics.
+- playlist holdout evaluation metrics are stored in model runs.
 - admin page supports imports, quality checks, model evaluation, job history, job detail, model runs, and label overrides.
 - sample data works without Spotify credentials.
 - deployment-ready Docker start scripts exist.
@@ -47,7 +48,7 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - reviewed Spotify playlist IDs or public dataset files collected at scale
 - optional sentence-transformer embedding workflow
 - pgvector implementation where hosting supports it
-- robust playlist holdout evaluation on larger data
+- robust playlist holdout evaluation on larger collected data
 - popularity prediction demo if official popularity data is sufficient
 - production deployment
 - deployed URL wired into portfolio card

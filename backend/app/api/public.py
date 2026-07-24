@@ -238,7 +238,14 @@ def model_insights(db: Session = Depends(get_db)) -> dict:
         "recommender": "hybrid_metadata_playlist_text",
         "default_result_count": 10,
         "evaluation_plan": "playlist holdout evaluation with coverage, diversity, novelty, and seed-exclusion checks",
-        "signals": ["language", "mood", "music_type", "region", "release era", "official popularity"],
+        "signals": ["language", "mood", "music_type", "region", "release era", "official popularity", "TF-IDF text similarity"],
+        "evaluation_metrics": [
+            "coverage",
+            "seed_exclusion_pass_rate",
+            "avg_score",
+            "playlist_holdout_hit_rate",
+            "playlist_holdout_avg_rank",
+        ],
         "natural_language_parser": "rule-based filters for language, mood, type, and era",
         "dataset": {
             "tracks": track_count,

@@ -120,8 +120,11 @@ The first model evaluation job stores `model_runs`, `recommendation_runs`, and `
 - average results per seed
 - seed-exclusion pass rate
 - average score
+- playlist holdout hit rate
+- playlist holdout average rank
+- playlist holdout average candidate count
 
-On the local sample dataset, the evaluation path verifies that the recommender excludes the seed track and produces saved model metrics for the Model Insights page.
+The playlist holdout check uses playlists with at least two tracks, treats the first track as a seed, holds out the remaining playlist tracks, and measures whether the recommender recovers a held-out track in the top results. On the local sample dataset, this verifies the evaluation path and produces saved model metrics for the Model Insights page. On a larger collected dataset, the same structure becomes a stronger approximation of recommendation quality.
 
 ## Dashboard and Application Pages
 
@@ -196,7 +199,7 @@ Planned improvements:
 - richer Spotify/public playlist seeds
 - sentence-transformer features
 - pgvector similarity when hosting supports it
-- playlist holdout evaluation at larger scale
+- stronger playlist holdout evaluation at larger scale
 - popularity prediction as a secondary ML demo
 - stronger artist collaboration graph
 - deployed production instance

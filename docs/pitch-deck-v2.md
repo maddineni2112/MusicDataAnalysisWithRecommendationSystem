@@ -143,13 +143,15 @@ Current evaluation stores:
 - coverage
 - average score
 - seed-exclusion pass rate
+- playlist holdout hit rate
+- playlist holdout average rank
 
 Future ML:
 
 - TF-IDF
 - sentence embeddings
 - pgvector
-- larger playlist holdout evaluation
+- larger-scale playlist holdout evaluation
 
 ## Slide 11: Admin Ops
 
