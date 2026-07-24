@@ -77,6 +77,18 @@ On Windows, the helper script runs the full local demo setup:
 
 The existing portfolio repo can seed a project card that opens the local dashboard at `http://127.0.0.1:8010/music/` while the portfolio itself runs at `http://127.0.0.1:8000/`.
 
+## Data Acquisition Seeds
+
+The scalable Indian music acquisition plan is tracked in `data/seeds/indian_music_seed_manifest.json`. It covers 8 Indian language groups and 40 Spotify discovery queries while keeping reviewed playlist IDs and raw exports out of Git.
+
+```bash
+docker compose exec api python -m app.cli seeds validate
+docker compose exec api python -m app.cli seeds export
+docker compose exec api python -m app.cli seeds collect-spotify
+```
+
+`collect-spotify` requires reviewed playlist IDs in the manifest plus Spotify API credentials. Without IDs, it exits safely with `needs_playlist_ids`.
+
 ## v1.0 Archive
 
 The original academic project is preserved under `archive/v1.0/`. It includes the PySpark notebook, report, presentation, and original recommender helper.

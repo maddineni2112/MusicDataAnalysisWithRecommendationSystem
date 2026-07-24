@@ -1,0 +1,126 @@
+{
+  "name": "Indian Music Intelligence Platform Seed Manifest",
+  "version": "v2-alpha",
+  "market": "IN",
+  "target_track_count": {
+    "local_research": "100000-300000",
+    "deployed_fallback": "curated subset sized to hosting limits"
+  },
+  "notes": [
+    "Use this manifest as the source-controlled acquisition plan.",
+    "Keep live Spotify playlist IDs, raw API responses, and large exports in data/raw/ unless they are safe to publish.",
+    "Playlist IDs below are intentionally empty placeholders until reviewed against source terms and collection goals."
+  ],
+  "language_groups": [
+    {
+      "language": "Hindi",
+      "regions": ["North India", "India"],
+      "categories": ["film", "pop", "devotional", "indie", "rap_hiphop"],
+      "spotify_search_queries": [
+        "Hindi film hits",
+        "Hindi romantic songs",
+        "Hindi devotional bhajan",
+        "Hindi indie pop",
+        "Hindi hip hop India"
+      ],
+      "playlist_ids": []
+    },
+    {
+      "language": "Telugu",
+      "regions": ["Telangana", "Andhra Pradesh", "India"],
+      "categories": ["film", "indie", "devotional", "folk"],
+      "spotify_search_queries": [
+        "Telugu film hits",
+        "Telugu romantic songs",
+        "Telugu devotional songs",
+        "Telugu folk songs",
+        "Telugu indie music"
+      ],
+      "playlist_ids": []
+    },
+    {
+      "language": "Tamil",
+      "regions": ["Tamil Nadu", "India"],
+      "categories": ["film", "indie", "classical", "devotional"],
+      "spotify_search_queries": [
+        "Tamil film hits",
+        "Tamil workout songs",
+        "Tamil devotional songs",
+        "Tamil classical vocal",
+        "Tamil indie music"
+      ],
+      "playlist_ids": []
+    },
+    {
+      "language": "Malayalam",
+      "regions": ["Kerala", "India"],
+      "categories": ["film", "indie", "devotional", "folk"],
+      "spotify_search_queries": [
+        "Malayalam film songs",
+        "Malayalam romantic songs",
+        "Malayalam devotional songs",
+        "Malayalam indie music",
+        "Malayalam folk songs"
+      ],
+      "playlist_ids": []
+    },
+    {
+      "language": "Kannada",
+      "regions": ["Karnataka", "India"],
+      "categories": ["film", "indie", "devotional", "folk"],
+      "spotify_search_queries": [
+        "Kannada film hits",
+        "Kannada romantic songs",
+        "Kannada devotional songs",
+        "Kannada indie music",
+        "Kannada folk songs"
+      ],
+      "playlist_ids": []
+    },
+    {
+      "language": "Punjabi",
+      "regions": ["Punjab", "India"],
+      "categories": ["pop", "folk", "film", "rap_hiphop"],
+      "spotify_search_queries": [
+        "Punjabi pop hits",
+        "Punjabi folk songs",
+        "Punjabi party songs",
+        "Punjabi hip hop",
+        "Punjabi film music"
+      ],
+      "playlist_ids": []
+    },
+    {
+      "language": "Bengali",
+      "regions": ["West Bengal", "India"],
+      "categories": ["film", "folk", "indie", "devotional"],
+      "spotify_search_queries": [
+        "Bengali film songs",
+        "Bengali folk songs",
+        "Rabindra Sangeet",
+        "Bengali indie music",
+        "Bengali devotional songs"
+      ],
+      "playlist_ids": []
+    },
+    {
+      "language": "Marathi",
+      "regions": ["Maharashtra", "India"],
+      "categories": ["film", "folk", "devotional", "indie"],
+      "spotify_search_queries": [
+        "Marathi film songs",
+        "Marathi devotional songs",
+        "Marathi folk songs",
+        "Marathi indie music",
+        "Marathi romantic songs"
+      ],
+      "playlist_ids": []
+    }
+  ],
+  "quality_targets": {
+    "minimum_tracks_per_language": 10000,
+    "minimum_playlist_sources_per_language": 30,
+    "dedupe_keys": ["spotify_track_id", "normalized_title_artist_album"],
+    "required_lineage_fields": ["source_name", "source_type", "source_url_or_citation", "collected_at"]
+  }
+}

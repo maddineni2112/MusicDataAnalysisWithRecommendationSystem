@@ -43,3 +43,33 @@ python -m app.cli collect spotify --playlist-file data/raw/spotify_playlist_ids.
 ```
 
 Large seed files and raw exports should stay under ignored folders such as `data/raw/`.
+
+## Indian Music Seed Manifest
+
+The source-controlled acquisition plan lives at:
+
+```text
+data/seeds/indian_music_seed_manifest.json
+```
+
+It defines the v2 Indian music scope across Hindi, Telugu, Tamil, Malayalam, Kannada, Punjabi, Bengali, and Marathi. Each language group includes regions, categories, Spotify search queries, and an empty `playlist_ids` list for reviewed playlist IDs.
+
+Validate and summarize the manifest:
+
+```bash
+python -m app.cli seeds validate
+```
+
+Export local acquisition helper files under ignored `data/raw/`:
+
+```bash
+python -m app.cli seeds export
+```
+
+Credential-gated Spotify collection from reviewed manifest playlist IDs:
+
+```bash
+python -m app.cli seeds collect-spotify --limit-per-playlist 100
+```
+
+If the manifest has no playlist IDs, the command exits with `needs_playlist_ids` and keeps the search queries as the discovery backlog. This is intentional: it keeps the public repo clean while documenting the scalable collection strategy.

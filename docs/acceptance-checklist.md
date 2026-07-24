@@ -16,6 +16,8 @@ This checklist tracks the final plan toward a complete v2.0 release.
 - CSV import works.
 - playlist-style JSON import works.
 - Spotify collection path exists and is credential-gated.
+- source-controlled Indian music seed manifest exists.
+- manifest validation/export/credential-gated collection commands exist.
 - source lineage and raw snapshots are stored.
 - automatic labels are inferred with confidence/evidence.
 - label overrides persist separately.
@@ -42,7 +44,7 @@ This checklist tracks the final plan toward a complete v2.0 release.
 ## Still Required for Full v2.0
 
 - larger 100k-300k track local/research dataset, or documented smaller deployed subset
-- richer public dataset acquisition workflow
+- reviewed Spotify playlist IDs or public dataset files collected at scale
 - optional sentence-transformer embedding workflow
 - pgvector implementation where hosting supports it
 - robust playlist holdout evaluation on larger data

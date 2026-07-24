@@ -8,6 +8,7 @@ from app.services.features import build_tfidf_features
 from app.services.imports import import_csv, import_json, import_playlist_json
 from app.services.jobs import run_logged_job
 from app.services.quality import run_quality_checks
+from app.services.seed_manifest import load_seed_manifest, summarize_seed_manifest, write_playlist_id_file, write_search_query_file
 from app.services.spotify import collect_spotify_playlists, read_playlist_ids
 
 app = typer.Typer(help="Indian Music Intelligence Platform data and ML jobs.")
@@ -16,6 +17,7 @@ quality_app = typer.Typer(help="Run data quality checks.")
 recommender_app = typer.Typer(help="Build recommendation artifacts.")
 models_app = typer.Typer(help="Train/evaluate models.")
 collect_app = typer.Typer(help="Collect API data.")
+seeds_app = typer.Typer(help="Manage curated data acquisition seed manifests.")
 
 
 @import_app.command("csv")
@@ -118,11 +120,72 @@ def collect_spotify_command(
     typer.echo(result)
 
 
+@seeds_app.command("validate")
+def seeds_validate_command(path: Path = Path("data/seeds/indian_music_seed_manifest.json")) -> None:
+    manifest = load_seed_manifest(path)
+    typer.echo(summarize_seed_manifest(manifest))
+
+
+@seeds_app.command("export")
+def seeds_export_command(
+    path: Path = Path("data/seeds/indian_music_seed_manifest.json"),
+    playlist_output: Path = Path("data/raw/spotify_playlist_ids.txt"),
+    query_output: Path = Path("data/raw/spotify_search_queries.csv"),
+) -> None:
+    manifest = load_seed_manifest(path)
+    playlist_count = write_playlist_id_file(manifest, playlist_output)
+    query_count = write_search_query_file(manifest, query_output)
+    typer.echo(
+        {
+            "playlist_output": str(playlist_output),
+            "playlist_id_count": playlist_count,
+            "query_output": str(query_output),
+            "search_query_count": query_count,
+        }
+    )
+
+
+@seeds_app.command("collect-spotify")
+def seeds_collect_spotify_command(
+    path: Path = Path("data/seeds/indian_music_seed_manifest.json"),
+    market: str | None = None,
+    limit_per_playlist: int = 100,
+) -> None:
+    manifest = load_seed_manifest(path)
+    playlist_output = Path("data/raw/spotify_playlist_ids.txt")
+    playlist_count = write_playlist_id_file(manifest, playlist_output)
+    if playlist_count == 0:
+        typer.echo(
+            {
+                "status": "needs_playlist_ids",
+                "message": "Add reviewed Spotify playlist IDs to the manifest before live collection. Search queries were provided for manual/API discovery.",
+                "manifest": str(path),
+            }
+        )
+        return
+    playlist_ids = read_playlist_ids(playlist_output, None)
+    with SessionLocal() as db:
+        result = run_logged_job(
+            db,
+            job_type="spotify_seed_manifest_collect",
+            parameters={"manifest": str(path), "market": market or manifest.get("market", "IN"), "limit_per_playlist": limit_per_playlist},
+            handler=lambda: collect_spotify_playlists(
+                db,
+                playlist_ids=playlist_ids,
+                market=market or manifest.get("market", "IN"),
+                limit_per_playlist=limit_per_playlist,
+                source_name=f"{manifest['name']} Spotify collection",
+            ),
+        )
+    typer.echo(result)
+
+
 app.add_typer(import_app, name="import")
 app.add_typer(quality_app, name="quality")
 app.add_typer(recommender_app, name="recommender")
 app.add_typer(models_app, name="models")
 app.add_typer(collect_app, name="collect")
+app.add_typer(seeds_app, name="seeds")
 
 if __name__ == "__main__":
     app()
