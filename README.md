@@ -34,16 +34,17 @@ This project analyzes Spotify track data and builds a recommendation workflow us
 
 ```text
 .
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── docs/
-│   ├── MusicDataAnalysisNRecommendationSystem_report.pdf
-│   └── Music_Data_Analysis_Song_Recommendation.pptx
-├── notebooks/
-│   └── MusicDataAnalysisNRecommendationSystem_code.ipynb
-└── src/
-    └── recommender.py
+|-- README.md
+|-- requirements.txt
+|-- code/
+|   |-- MusicDataAnalysisNRecommendationSystem_code.ipynb
+|   `-- src/
+|       `-- recommender.py
+|-- data/
+|   `-- Spotify_data.csv
+`-- resources/
+    |-- MusicDataAnalysisNRecommendationSystem_report.pdf
+    `-- Music_Data_Analysis_Song_Recommendation.pptx
 ```
 
 ## How to Run
@@ -54,14 +55,16 @@ This project analyzes Spotify track data and builds a recommendation workflow us
 pip install -r requirements.txt
 ```
 
-2. Add the Spotify dataset locally.
+2. Confirm the Spotify dataset exists at:
 
-The notebook expects a CSV file similar to `Spotify_data.csv`. The dataset is not included in this repository, so update the file path in the notebook before running it.
+```text
+data/Spotify_data.csv
+```
 
 3. Open and run the notebook:
 
 ```bash
-jupyter notebook notebooks/MusicDataAnalysisNRecommendationSystem_code.ipynb
+jupyter notebook code/MusicDataAnalysisNRecommendationSystem_code.ipynb
 ```
 
 ## Notes
@@ -70,7 +73,6 @@ This project is a content-based recommendation system. It recommends songs using
 
 ## Future Improvements
 
-- Add a reproducible dataset download or data sample.
 - Convert the notebook workflow into a full Python pipeline.
 - Add user interaction data for collaborative filtering.
 - Build a small Streamlit app for interactive song recommendations.

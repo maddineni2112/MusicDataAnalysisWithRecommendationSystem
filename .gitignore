@@ -9,8 +9,10 @@ venv/
 env/
 
 # Local data
-data/
+data/*
 *.csv
+!data/
+!data/Spotify_data.csv
 *.parquet
 
 # OS/editor files
