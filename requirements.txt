@@ -1,7 +1,8 @@
-pandas
+pandas<3
 numpy
-pyspark
+pyspark==3.5.3
 matplotlib
 seaborn
 jupyter
 notebook
+pytest

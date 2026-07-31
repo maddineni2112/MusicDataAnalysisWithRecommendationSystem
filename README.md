@@ -30,6 +30,14 @@ This project analyzes Spotify track data and builds a recommendation workflow us
 - K-Means clustering identified groups of songs with similar audio characteristics.
 - The recommendation workflow can return the nearest songs for a given input track based on PCA feature distance.
 
+## Big Data Concepts Demonstrated
+
+- Uses a Spark session to load and process the full Spotify dataset.
+- Uses Spark DataFrames for filtering, null checks, feature preparation, model input, PCA, and clustering.
+- Uses Spark ML pipelines with `VectorAssembler`, `StandardScaler`, `PCA`, Linear Regression, Random Forest, and K-Means.
+- Caches reused Spark DataFrames to reduce repeated computation during modeling and recommendation steps.
+- Keeps Pandas conversion limited to local plots, summary tables, and final recommendation display.
+
 ## Repository Structure
 
 ```text
@@ -66,6 +74,16 @@ data/Spotify_data.csv
 ```bash
 jupyter notebook code/MusicDataAnalysisNRecommendationSystem_code.ipynb
 ```
+
+## Expected Outputs
+
+- Dataset loaded with Spark: `169,909` rows and `19` columns.
+- Dataset year range: `1921` to `2020`.
+- Main modeling mode: full dataset by default.
+- Recent-years comparison slice: songs from `2015` to `2020`.
+- Recommendation lookup supports `track_id`, `song_name`, and optional `artist_name`.
+- Ambiguous song names return candidate tracks instead of silently choosing the wrong seed.
+- Missing songs return a clear not-found result.
 
 ## Notes
 
