@@ -7,6 +7,8 @@ This project analyzes Spotify track data and builds a recommendation workflow us
 - Analyzed Spotify audio features such as danceability, energy, acousticness, tempo, valence, loudness, and popularity.
 - Cleaned and transformed the dataset using Pandas and PySpark.
 - Built exploratory visualizations for popularity distribution, yearly trends, feature relationships, and correlations.
+- Added deeper analysis of decade trends, artist-level patterns, popularity segments, outliers, and song-duration evolution.
+- Compared PySpark operations with Pandas baselines to explain local runtime tradeoffs and big-data scalability.
 - Compared Linear Regression and Random Forest Regression for popularity prediction.
 - Used PCA to reduce audio-feature dimensions while preserving most of the variance.
 - Built a content-based recommendation function that finds similar songs using distance between PCA vectors.
@@ -18,6 +20,8 @@ This project analyzes Spotify track data and builds a recommendation workflow us
 | --- | --- |
 | Data processing | Pandas, PySpark DataFrames |
 | Exploration | Correlation analysis, distribution plots, pair plots, trend analysis |
+| Deeper analysis | Decade trends, artist-level summaries, popularity segments, outlier review, duration evolution |
+| Big-data comparison | PySpark vs Pandas timing and scalability notes |
 | Prediction | Linear Regression, Random Forest Regression |
 | Evaluation | MSE, RMSE |
 | Recommendation | PCA feature vectors, L2 distance |
@@ -26,6 +30,10 @@ This project analyzes Spotify track data and builds a recommendation workflow us
 ## Key Results
 
 - Random Forest Regression performed slightly better than Linear Regression for predicting popularity.
+- Decade and duration analyses show how music characteristics and track length changed over time.
+- Artist-level analysis separates catalog size from average popularity.
+- Popularity segment profiling shows audio-feature associations with popularity, while noting that popularity is not caused by audio features alone.
+- Outlier analysis identifies unusual songs that may be valid musical edge cases rather than records to delete automatically.
 - PCA was used to create compact song representations for similarity matching.
 - K-Means clustering identified groups of songs with similar audio characteristics.
 - The recommendation workflow can return the nearest songs for a given input track based on PCA feature distance.
@@ -37,6 +45,7 @@ This project analyzes Spotify track data and builds a recommendation workflow us
 - Uses Spark ML pipelines with `VectorAssembler`, `StandardScaler`, `PCA`, Linear Regression, Random Forest, and K-Means.
 - Caches reused Spark DataFrames to reduce repeated computation during modeling and recommendation steps.
 - Keeps Pandas conversion limited to local plots, summary tables, and final recommendation display.
+- Includes PySpark-vs-Pandas comparisons. Pandas can be faster for this local 169,909-row CSV, while Spark is stronger for scalable pipelines, caching, larger-than-memory data, and MLlib workflows.
 
 ## Repository Structure
 
