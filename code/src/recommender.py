@@ -36,12 +36,12 @@ def _spark_imports():
     try:
         from pyspark.ml import Pipeline
         from pyspark.ml.feature import PCA, StandardScaler, VectorAssembler
+        from pyspark.ml.functions import vector_to_array
         from pyspark.sql import functions as fn
-        from pyspark.sql.types import FloatType
     except ImportError as exc:
         raise ImportError("PySpark is required for Spark DataFrame recommendations.") from exc
 
-    return Pipeline, PCA, StandardScaler, VectorAssembler, fn, FloatType
+    return Pipeline, PCA, StandardScaler, VectorAssembler, vector_to_array, fn
 
 
 def _small_to_pandas(df: SparkOrPandasDataFrame) -> pd.DataFrame:
@@ -81,7 +81,7 @@ def build_pca_pipeline(k: int = 10, input_cols: list[str] | None = None) -> Pipe
     features = input_cols or AUDIO_FEATURES
     return Pipeline(
         stages=[
-            VectorAssembler(inputCols=features, outputCol="features"),
+            VectorAssembler(inputCols=features, outputCol="features", handleInvalid="skip"),
             StandardScaler(
                 withMean=True,
                 withStd=True,
@@ -127,7 +127,7 @@ def find_seed_tracks(
             limit=limit,
         )
 
-    _, _, _, _, fn, _ = _spark_imports()
+    _, _, _, _, _, fn = _spark_imports()
     query = music_pca_df
     if track_id is not None and "id" in music_pca_df.columns:
         query = query.where(fn.col("id") == track_id)
@@ -194,8 +194,7 @@ def recommend_similar_songs(
         result.insert(0, "status", "ok")
         return result
 
-    _, _, _, _, fn, FloatType = _spark_imports()
-    distance_udf = fn.udf(l2_distance, FloatType())
+    _, _, _, _, vector_to_array, fn = _spark_imports()
     seed_filter = fn.lit(True)
     if track_id is not None and "id" in music_pca_df.columns:
         seed_filter = fn.col("id") == track_id
@@ -208,7 +207,15 @@ def recommend_similar_songs(
         music_pca_df.where(seed_filter)
         .select(fn.col("pca_score").alias("seed_score"))
         .join(music_pca_df)
-        .withColumn("distance", distance_udf("pca_score", "seed_score"))
+        .withColumn("pca_array", vector_to_array("pca_score"))
+        .withColumn("seed_array", vector_to_array("seed_score"))
+        .withColumn(
+            "distance",
+            fn.expr(
+                "sqrt(aggregate(zip_with(pca_array, seed_array, "
+                "(x, y) -> pow(x - y, 2D)), 0D, (acc, x) -> acc + x))"
+            ),
+        )
         .where(fn.col("distance") > 0)
         .orderBy(fn.asc("distance"))
         .limit(limit)
